@@ -16,7 +16,9 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ language }) => {
   ]);
   const [pace, setPace] = useState<'relaxed' | 'moderate' | 'active'>('moderate');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [itinerary, setItinerary] = useState<ItineraryPlan | null>(null);
+  const [itinerary, setItinerary] = useState<ItineraryPlan>(() =>
+    getDefaultItinerary(2, ['Architecture', 'History'], 'moderate')
+  );
   const [copied, setCopied] = useState(false);
 
   const t = TRANSLATIONS[language];
@@ -30,31 +32,39 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ language }) => {
   ];
 
   const toggleInterest = (id: string) => {
+    let updated: string[];
     if (selectedInterests.includes(id)) {
       if (selectedInterests.length > 1) {
-        setSelectedInterests(selectedInterests.filter((i) => i !== id));
+        updated = selectedInterests.filter((i) => i !== id);
+      } else {
+        updated = selectedInterests;
       }
     } else {
-      setSelectedInterests([...selectedInterests, id]);
+      updated = [...selectedInterests, id];
     }
+    setSelectedInterests(updated);
   };
 
-  const generatePlan = async () => {
+  const generatePlan = async (
+    targetDuration = duration,
+    targetInterests = selectedInterests,
+    targetPace = pace
+  ) => {
     setIsGenerating(true);
-    const dayCount = duration === '1-day' ? 1 : duration === '3-day' ? 3 : 2;
+    const dayCount = targetDuration === '1-day' ? 1 : targetDuration === '3-day' ? 3 : 2;
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const timeoutId = setTimeout(() => controller.abort(), 3500);
 
       const response = await fetch('/api/generate-itinerary', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: controller.signal,
         body: JSON.stringify({
-          duration,
-          interests: selectedInterests,
-          pace,
+          duration: targetDuration,
+          interests: targetInterests,
+          pace: targetPace,
           language,
         }),
       });
@@ -62,42 +72,49 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ language }) => {
 
       if (response.ok) {
         const data = await response.json();
-        if (data.itinerary) {
+        if (data.itinerary && Array.isArray(data.itinerary.days) && data.itinerary.days.length > 0) {
           setItinerary(data.itinerary);
+          setIsGenerating(false);
           return;
         }
       }
     } catch (err) {
       console.warn('Backend itinerary service unavailable, using curated itinerary engine:', err);
-    } finally {
-      setIsGenerating(false);
     }
 
-    // Curated local itinerary fallback
-    setItinerary(getDefaultItinerary(dayCount));
+    // Curated dynamic local itinerary fallback
+    setItinerary(getDefaultItinerary(dayCount, targetInterests, targetPace));
+    setIsGenerating(false);
   };
 
-  // Preload initial itinerary
+  const handleDurationChange = (d: '1-day' | '2-day' | '3-day') => {
+    setDuration(d);
+    generatePlan(d, selectedInterests, pace);
+  };
+
+  // Re-generate when language changes
   React.useEffect(() => {
-    generatePlan();
-  }, [duration, language]);
+    generatePlan(duration, selectedInterests, pace);
+  }, [language]);
 
   const handleCopyItinerary = () => {
     if (!itinerary) return;
     const textLines = [
-      language === 'kn' ? itinerary.titleKn : itinerary.title,
-      language === 'kn' ? itinerary.summaryKn : itinerary.summary,
+      language === 'kn' ? itinerary.titleKn || itinerary.title : itinerary.title,
+      language === 'kn' ? itinerary.summaryKn || itinerary.summary : itinerary.summary,
       '',
       ...itinerary.days.flatMap((day) => [
-        `DAY ${day.dayNumber}: ${language === 'kn' ? day.themeKn : day.theme}`,
+        `DAY ${day.dayNumber}: ${language === 'kn' ? day.themeKn || day.theme : day.theme}`,
         ...day.activities.map(
-          (act) => `  ${act.time} - ${language === 'kn' ? act.titleKn : act.title} (${act.location})`
+          (act) => `  ${act.time} - ${language === 'kn' ? act.titleKn || act.title : act.title} (${act.location})`
         ),
-        `  Meal: ${language === 'kn' ? day.recommendedMeal.dishKn : day.recommendedMeal.dish} @ ${day.recommendedMeal.place}`,
+        day.recommendedMeal
+          ? `  Meal: ${language === 'kn' ? day.recommendedMeal.dishKn || day.recommendedMeal.dish : day.recommendedMeal.dish} @ ${day.recommendedMeal.place}`
+          : '',
         '',
       ]),
     ];
-    navigator.clipboard.writeText(textLines.join('\n'));
+    navigator.clipboard.writeText(textLines.filter(Boolean).join('\n'));
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };
@@ -136,7 +153,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ language }) => {
                   <button
                     key={d}
                     type="button"
-                    onClick={() => setDuration(d)}
+                    onClick={() => handleDurationChange(d)}
                     className={`w-full text-left px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                       duration === d
                         ? 'bg-amber-600 text-white shadow-xs'
@@ -202,11 +219,11 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ language }) => {
               <div className="pt-4">
                 <button
                   type="button"
-                  onClick={generatePlan}
+                  onClick={() => generatePlan(duration, selectedInterests, pace)}
                   disabled={isGenerating}
                   className="w-full py-3 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <Sparkles className="w-4 h-4" />
+                  <Sparkles className={`w-4 h-4 ${isGenerating ? 'animate-spin' : ''}`} />
                   <span>
                     {isGenerating ? t.planner.generatingText : t.planner.generateBtn}
                   </span>
@@ -218,7 +235,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ language }) => {
 
         {/* Output Itinerary Plan */}
         {itinerary && (
-          <div className="bg-white border border-amber-200 rounded-3xl p-6 sm:p-10 shadow-lg space-y-8 animate-in fade-in">
+          <div className={`bg-white border border-amber-200 rounded-3xl p-6 sm:p-10 shadow-lg space-y-8 transition-opacity duration-300 ${isGenerating ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
             {/* Header: Title, Summary, Actions */}
             <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-100 pb-6">
               <div className="max-w-2xl">
@@ -229,10 +246,10 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ language }) => {
                   </span>
                 </div>
                 <h3 className="font-serif text-2xl sm:text-3xl font-bold text-slate-900">
-                  {language === 'kn' ? itinerary.titleKn : itinerary.title}
+                  {language === 'kn' ? itinerary.titleKn || itinerary.title : itinerary.title}
                 </h3>
                 <p className="mt-2 text-sm text-slate-600 leading-relaxed">
-                  {language === 'kn' ? itinerary.summaryKn : itinerary.summary}
+                  {language === 'kn' ? itinerary.summaryKn || itinerary.summary : itinerary.summary}
                 </p>
               </div>
 
@@ -265,7 +282,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ language }) => {
                     </span>
                     <div>
                       <h4 className="font-serif font-bold text-lg text-slate-900">
-                        {language === 'kn' ? `ದಿನ ${day.dayNumber}: ${day.themeKn}` : `Day ${day.dayNumber}: ${day.theme}`}
+                        {language === 'kn' ? `ದಿನ ${day.dayNumber}: ${day.themeKn || day.theme}` : `Day ${day.dayNumber}: ${day.theme}`}
                       </h4>
                     </div>
                   </div>
@@ -280,7 +297,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ language }) => {
                             {activity.time}
                           </span>
                           <span className="font-semibold text-sm text-slate-900">
-                            {language === 'kn' ? activity.titleKn : activity.title}
+                            {language === 'kn' ? activity.titleKn || activity.title : activity.title}
                           </span>
                           <span className="text-[11px] text-slate-500 flex items-center gap-1">
                             <MapPin className="w-3 h-3 text-slate-400" />
@@ -288,7 +305,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ language }) => {
                           </span>
                         </div>
                         <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                          {language === 'kn' ? activity.descriptionKn : activity.description}
+                          {language === 'kn' ? activity.descriptionKn || activity.description : activity.description}
                         </p>
                         {activity.insiderTip && (
                           <p className="text-[11px] text-amber-900 font-medium italic">
@@ -308,7 +325,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ language }) => {
                               {language === 'kn' ? 'ಶಿಫಾರಸು ಮಾಡಿದ ಊಟ:' : 'Recommended Meal Stop:'}
                             </span>
                             <span className="font-semibold text-slate-800">
-                              {language === 'kn' ? day.recommendedMeal.dishKn : day.recommendedMeal.dish}
+                              {language === 'kn' ? day.recommendedMeal.dishKn || day.recommendedMeal.dish : day.recommendedMeal.dish}
                             </span>
                             <span className="text-slate-500 block text-[11px] mt-0.5">
                               @{day.recommendedMeal.place}
