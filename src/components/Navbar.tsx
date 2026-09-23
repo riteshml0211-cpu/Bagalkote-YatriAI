@@ -1,0 +1,208 @@
+import React, { useState } from 'react';
+import { Globe, Compass, Camera, Sparkles, MapPin, Volume2, PhoneCall, Menu, X, ShoppingBag, Utensils } from 'lucide-react';
+import { Language, Monument } from '../types';
+import { TRANSLATIONS } from '../data/translations';
+
+interface NavbarProps {
+  language: Language;
+  onToggleLanguage: () => void;
+  activeSection: string;
+  onNavigate: (sectionId: string) => void;
+  activeMonument: Monument | null;
+  isPlayingAudio: boolean;
+  onOpenAudioBar: () => void;
+  onOpenChat: () => void;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({
+  language,
+  onToggleLanguage,
+  activeSection,
+  onNavigate,
+  activeMonument,
+  isPlayingAudio,
+  onOpenAudioBar,
+  onOpenChat,
+}) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const t = TRANSLATIONS[language];
+
+  const navItems = [
+    { id: 'destinations', label: t.nav.destinations, icon: Compass },
+    { id: 'scanner', label: t.nav.scanner, icon: Camera },
+    { id: 'weavers', label: t.nav.weavers, icon: ShoppingBag },
+    { id: 'planner', label: t.nav.planner, icon: MapPin },
+    { id: 'cuisine', label: t.nav.cuisine, icon: Utensils },
+  ];
+
+  const handleItemClick = (id: string) => {
+    onNavigate(id);
+    setMobileMenuOpen(false);
+  };
+
+  return (
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-amber-900/10 shadow-xs transition-colors duration-200">
+      {/* Top Banner: Emergency & Helpline */}
+      <div className="bg-[#1E293B] text-amber-100 text-xs px-4 py-1.5 flex items-center justify-between">
+        <div className="flex items-center gap-2 max-w-7xl mx-auto w-full justify-between">
+          <div className="flex items-center gap-2">
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-medium tracking-wide">
+              {language === 'kn' ? 'ಕರ್ನಾಟಕ ಪ್ರವಾಸೋದ್ಯಮ • ಬಾಗಲಕೋಟೆ ಜಿಲ್ಲೆ' : 'Karnataka Tourism • Bagalkote District Heritage Enclave'}
+            </span>
+          </div>
+          <div className="hidden sm:flex items-center gap-4 text-slate-300">
+            <a href="tel:18004254254" className="flex items-center gap-1.5 hover:text-amber-300 transition-colors">
+              <PhoneCall className="w-3.5 h-3.5 text-amber-400" />
+              <span>{t.nav.helpline}</span>
+            </a>
+            <span className="text-slate-500">|</span>
+            <span className="text-amber-300/90 font-medium">
+              {language === 'kn' ? 'ಬಾದಾಮಿ • ಪಟ್ಟದಕಲ್ಲು • ಐಹೊಳೆ' : 'Badami • Pattadakal • Aihole'}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Navbar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-20">
+          {/* Brand Logo */}
+          <div
+            onClick={() => handleItemClick('hero')}
+            className="flex items-center gap-3 cursor-pointer group select-none"
+          >
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-linear-to-br from-amber-600 via-amber-700 to-stone-900 flex items-center justify-center shadow-md shadow-amber-900/20 group-hover:scale-105 transition-transform duration-200">
+              <span className="text-white font-serif font-black text-xl tracking-tighter">ಯಾ</span>
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span className="font-serif font-bold text-lg sm:text-xl text-slate-900 tracking-tight">
+                  {t.brandName}
+                </span>
+                <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-sm bg-amber-100 text-amber-800 uppercase tracking-widest border border-amber-300/60">
+                  {language === 'kn' ? 'ಸ್ಮಾರ್ಟ್ ಗೈಡ್' : 'AI Portal'}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 hidden sm:block">
+                {language === 'kn' ? 'ಬಾದಾಮಿ ಚಾಲುಕ್ಯ ಪರಂಪರೆ & ಇಳಕಲ್ ಕೈಮಗ್ಗ' : 'Chalukya Heritage & Ilkal Handlooms'}
+              </p>
+            </div>
+          </div>
+
+          {/* Desktop Nav Items */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeSection === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => handleItemClick(item.id)}
+                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+                    isActive
+                      ? 'bg-amber-50 text-amber-900 font-semibold border border-amber-200'
+                      : 'text-slate-700 hover:text-amber-900 hover:bg-slate-50'
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-amber-600' : 'text-slate-400'}`} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Action Buttons & Language Switcher */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Active Audio Pill */}
+            {activeMonument && (
+              <button
+                onClick={onOpenAudioBar}
+                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-600 text-white text-xs font-semibold shadow-sm hover:bg-amber-700 transition-all animate-pulse"
+                title="Active Audio Guide"
+              >
+                <Volume2 className="w-3.5 h-3.5" />
+                <span className="max-w-[120px] truncate">
+                  {language === 'kn' ? activeMonument.nameKn : activeMonument.name}
+                </span>
+                {isPlayingAudio ? (
+                  <span className="w-2 h-2 rounded-full bg-emerald-300 animate-ping" />
+                ) : (
+                  <span className="text-[10px] opacity-80">❚❚</span>
+                )}
+              </button>
+            )}
+
+            {/* Language Switcher Pill */}
+            <button
+              onClick={onToggleLanguage}
+              className="flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-300/80 text-amber-950 font-semibold text-xs sm:text-sm transition-all shadow-xs cursor-pointer active:scale-95"
+              aria-label="Toggle language between English and Kannada"
+            >
+              <Globe className="w-4 h-4 text-amber-700" />
+              <div className="flex items-center gap-1">
+                <span className={language === 'en' ? 'font-bold text-amber-900' : 'text-slate-400 font-normal'}>
+                  EN
+                </span>
+                <span className="text-slate-300">/</span>
+                <span className={language === 'kn' ? 'font-bold text-amber-900 text-sm' : 'text-slate-400 font-normal'}>
+                  ಕನ್ನಡ
+                </span>
+              </div>
+            </button>
+
+            {/* AI Assistant Quick Trigger */}
+            <button
+              onClick={onOpenChat}
+              className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-linear-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-medium text-xs sm:text-sm shadow-md shadow-amber-900/15 transition-all active:scale-95 cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4 text-amber-200" />
+              <span className="hidden sm:inline">{t.nav.assistant}</span>
+              <span className="sm:hidden">AI</span>
+            </button>
+
+            {/* Mobile Menu Hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
+              aria-label="Open navigation menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu Dropdown */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden bg-white border-b border-amber-900/10 px-4 pt-2 pb-4 space-y-1 shadow-lg animate-in slide-in-from-top-2">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeSection === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleItemClick(item.id)}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive ? 'bg-amber-50 text-amber-900 font-semibold' : 'text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                <Icon className={`w-4 h-4 ${isActive ? 'text-amber-600' : 'text-slate-400'}`} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+          <div className="pt-2 border-t border-slate-100 mt-2">
+            <a
+              href="tel:18004254254"
+              className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:text-amber-800"
+            >
+              <PhoneCall className="w-3.5 h-3.5 text-amber-600" />
+              <span>{t.nav.helpline}</span>
+            </a>
+          </div>
+        </div>
+      )}
+    </header>
+  );
+};

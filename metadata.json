@@ -1,0 +1,6 @@
+{
+  "name": "Bagalkote YatriAI",
+  "description": "Smart digital tourism portal for Bagalkote District featuring multimodal AI assistant, bilingual English-Kannada guides, monument scanner, and weaver hub.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
