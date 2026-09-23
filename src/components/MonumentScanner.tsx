@@ -82,11 +82,53 @@ export const MonumentScanner: React.FC<MonumentScannerProps> = ({
   onAskAiAboutMonument,
 }) => {
   const [isScanning, setIsScanning] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [scanResult, setScanResult] = useState<MonumentScanResult | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const t = TRANSLATIONS[language];
+
+  // Client-side image compressor using HTML5 Canvas to prevent 413 Payload Too Large
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let { width, height } = img;
+          const maxDim = 1200;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve((e.target?.result as string) || '');
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.85));
+        };
+        img.onerror = () => {
+          resolve((e.target?.result as string) || '');
+        };
+        img.src = (e.target?.result as string) || '';
+      };
+      reader.onerror = () => {
+        resolve('');
+      };
+      reader.readAsDataURL(file);
+    });
+  };
 
   // Process image with server API (which calls Gemini Vision or local registry fallback)
   const processImageScan = async (base64OrUrl: string, landmarkHint?: string) => {
@@ -110,7 +152,7 @@ export const MonumentScanner: React.FC<MonumentScannerProps> = ({
       }
 
       const resJson = await response.json();
-      if (resJson.data) {
+      if (resJson.data && (resJson.data.monumentName || resJson.data.monumentNameKn)) {
         setScanResult({
           ...resJson.data,
           sourceImage: base64OrUrl,
@@ -120,26 +162,104 @@ export const MonumentScanner: React.FC<MonumentScannerProps> = ({
       }
     } catch (err: any) {
       console.error('Scan error:', err);
-      // Fallback
-      setErrorMsg(language === 'kn' ? 'ಸ್ಕ್ಯಾನ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.' : 'Could not identify monument. Please try another angle.');
+      setErrorMsg(
+        language === 'kn'
+          ? 'ಸ್ಕ್ಯಾನ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.'
+          : 'Could not identify monument. Please try another angle.'
+      );
     } finally {
       setIsScanning(false);
     }
   };
 
-  // Handle file upload
+  // Process a dropped or selected file
+  const handleProcessFile = async (file: File) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/') && !file.name.match(/\.(jpe?g|png|webp|gif|bmp|heic|avif)$/i)) {
+      setErrorMsg(
+        language === 'kn'
+          ? 'ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ ಚಿತ್ರ ಫೈಲ್ (JPEG, PNG, WebP) ಅಪ್‌ಲೋಡ್ ಮಾಡಿ.'
+          : 'Please upload a valid image file (JPEG, PNG, WebP).'
+      );
+      return;
+    }
+
+    try {
+      setIsScanning(true);
+      setErrorMsg(null);
+      const optimizedBase64 = await compressImage(file);
+      setSelectedImage(optimizedBase64);
+
+      // Guess landmark hint from file name if user named their photo
+      const nameLower = file.name.toLowerCase();
+      let hint: string | undefined = undefined;
+      if (nameLower.includes('badami') || nameLower.includes('nataraja') || nameLower.includes('cave')) {
+        hint = 'badami_cave_1';
+      } else if (nameLower.includes('bhootanatha') || nameLower.includes('agastya')) {
+        hint = 'bhootanatha_temple';
+      } else if (nameLower.includes('pattadakal') || nameLower.includes('virupaksha')) {
+        hint = 'pattadakal_virupaksha';
+      } else if (nameLower.includes('aihole') || nameLower.includes('durga')) {
+        hint = 'aihole_durga';
+      } else if (nameLower.includes('mahakuta') || nameLower.includes('pushkarini')) {
+        hint = 'mahakuta_pool';
+      } else if (nameLower.includes('banashankari') || nameLower.includes('cholachagudd')) {
+        hint = 'banashankari_temple';
+      } else if (nameLower.includes('kudalasangama') || nameLower.includes('basava')) {
+        hint = 'kudalasangama';
+      } else if (nameLower.includes('ilkal') || nameLower.includes('saree') || nameLower.includes('handloom')) {
+        hint = 'ilkal_handloom';
+      }
+
+      await processImageScan(optimizedBase64, hint);
+    } catch (err: any) {
+      console.error('File scan failed:', err);
+      setErrorMsg(
+        language === 'kn'
+          ? 'ಸ್ಕ್ಯಾನ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.'
+          : 'Could not identify monument. Please try another angle.'
+      );
+      setIsScanning(false);
+    }
+  };
+
+  // Handle file input change
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (file) {
+      handleProcessFile(file);
+    }
+    // reset input so the same file can be picked again if desired
+    e.target.value = '';
+  };
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        // Guess a default hint or let vision do it
-        processImageScan(reader.result, 'badami_cave_1');
-      }
-    };
-    reader.readAsDataURL(file);
+  // Drag and drop event handlers
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isDragging) setIsDragging(true);
+  };
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      handleProcessFile(file);
+    }
   };
 
   // Handle preset sample click
@@ -176,8 +296,16 @@ export const MonumentScanner: React.FC<MonumentScannerProps> = ({
             {/* Drag and Drop Zone */}
             <div
               onClick={() => fileInputRef.current?.click()}
+              onDragOver={handleDragOver}
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
               className={`relative border-2 border-dashed rounded-3xl p-8 sm:p-12 text-center transition-all cursor-pointer group bg-white shadow-sm hover:shadow-md ${
-                isScanning ? 'border-amber-500 bg-amber-50/40' : 'border-amber-300/80 hover:border-amber-500'
+                isDragging
+                  ? 'border-amber-500 bg-amber-100/60 scale-[1.01] ring-4 ring-amber-400/30'
+                  : isScanning
+                  ? 'border-amber-500 bg-amber-50/40'
+                  : 'border-amber-300/80 hover:border-amber-500'
               }`}
             >
               <input
@@ -207,6 +335,20 @@ export const MonumentScanner: React.FC<MonumentScannerProps> = ({
                     <span>{t.scanner.analyzingText}</span>
                   </div>
                 </div>
+              ) : isDragging ? (
+                <div className="space-y-4 py-6">
+                  <div className="w-20 h-20 mx-auto rounded-2xl bg-amber-200 text-amber-900 flex items-center justify-center animate-bounce shadow-md">
+                    <Upload className="w-10 h-10 text-amber-800" />
+                  </div>
+                  <div>
+                    <h3 className="font-serif font-bold text-xl text-amber-900">
+                      {language === 'kn' ? 'ಚಿತ್ರವನ್ನು ಇಲ್ಲಿ ಬಿಡಿ!' : 'Drop your photo here now!'}
+                    </h3>
+                    <p className="text-xs text-amber-800 mt-1 font-medium">
+                      {language === 'kn' ? 'ಸ್ಕ್ಯಾನ್ ಮಾಡಲು ಚಿತ್ರವನ್ನು ಬಿಡುಗಡೆ ಮಾಡಿ' : 'Release to instantly scan with Bagalkote YatriAI'}
+                    </p>
+                  </div>
+                </div>
               ) : (
                 <div className="space-y-4">
                   <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
@@ -223,7 +365,7 @@ export const MonumentScanner: React.FC<MonumentScannerProps> = ({
                   <div className="pt-2 flex justify-center">
                     <button
                       type="button"
-                      className="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs sm:text-sm shadow-md transition-all active:scale-95 flex items-center gap-2"
+                      className="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs sm:text-sm shadow-md transition-all active:scale-95 flex items-center gap-2 cursor-pointer"
                     >
                       <Camera className="w-4 h-4" />
                       <span>{language === 'kn' ? 'ಫೋಟೋ ಆಯ್ಕೆ ಮಾಡಿ' : 'Choose Photo or Capture'}</span>

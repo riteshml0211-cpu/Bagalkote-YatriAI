@@ -13,7 +13,8 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = parseInt(process.env.PORT || '3000', 10);
 
-app.use(express.json({ limit: '15mb' }));
+app.use(express.json({ limit: '30mb' }));
+app.use(express.urlencoded({ limit: '30mb', extended: true }));
 
 // Initialize Google GenAI client if API key is present
 const apiKey = process.env.GEMINI_API_KEY;
@@ -140,8 +141,23 @@ app.post('/api/identify-monument', async (req, res) => {
       return res.status(400).json({ error: 'Image data or landmark hint is required' });
     }
 
-    if (ai && imageBase64) {
-      const cleanBase64 = imageBase64.replace(/^data:image\/[a-z]+;base64,/, '');
+    let detectedMime = mimeType;
+    let cleanBase64 = '';
+
+    if (imageBase64) {
+      if (typeof imageBase64 === 'string' && imageBase64.includes(',')) {
+        const [header, dataPart] = imageBase64.split(',');
+        cleanBase64 = dataPart.trim();
+        const mimeMatch = header.match(/data:([^;]+);/);
+        if (mimeMatch) {
+          detectedMime = mimeMatch[1];
+        }
+      } else if (typeof imageBase64 === 'string') {
+        cleanBase64 = imageBase64.trim();
+      }
+    }
+
+    if (ai && cleanBase64) {
       const promptText = `Examine this photo from Bagalkote District heritage sites (Badami, Pattadakal, Aihole, Mahakuta, Banashankari, Kudalasangama, or Ilkal handlooms).
 Identify the landmark or monument accurately. Output in strict JSON format with these exact keys:
 {
@@ -167,7 +183,7 @@ Identify the landmark or monument accurately. Output in strict JSON format with 
             parts: [
               {
                 inlineData: {
-                  mimeType,
+                  mimeType: detectedMime,
                   data: cleanBase64,
                 },
               },
@@ -180,8 +196,12 @@ Identify the landmark or monument accurately. Output in strict JSON format with 
           },
         });
 
-        const parsed = JSON.parse(response.text || '{}');
-        return res.json({ data: parsed, source: 'gemini-vision' });
+        const rawText = response.text || '';
+        const cleaned = rawText.replace(/```(?:json)?/gi, '').replace(/```/g, '').trim();
+        const parsed = JSON.parse(cleaned);
+        if (parsed && (parsed.monumentName || parsed.monumentNameKn)) {
+          return res.json({ data: parsed, source: 'gemini-vision' });
+        }
       } catch (geminiErr) {
         console.warn('Gemini vision parse error, using landmark matching:', geminiErr);
       }
@@ -325,7 +345,7 @@ app.get('/api/tts', async (req, res) => {
 });
 
 // Helper for fallback monument scanner match
-function getPreloadedMonumentMatch(hint: string) {
+function getPreloadedMonumentMatch(hint: string = 'badami_cave_1') {
   const registry: Record<string, any> = {
     badami_cave_1: {
       monumentName: 'Badami Cave Temple 1 (Shiva Nataraja Sanctuary)',
@@ -528,6 +548,16 @@ function getPreloadedMonumentMatch(hint: string) {
         'ಇಳಕಲ್ ಕೈಮಗ್ಗದ ನೇಕಾರಿಕೆಯನ್ನು ನೀವು ವೀಕ್ಷಿಸುತ್ತಿದ್ದೀರಿ. ನೇಕಾರರ ಕೈಚಳಕದಲ್ಲಿ ಮೂಡಿಬರುವ ಟೋಪೆತೆಂಚಿ ಸೆರಗು ಹಾಗೂ ಕೊಂಡಿ ಕಲೆಯು ಶತಮಾನಗಳ ಇತಿಹಾಸ ಹೊಂದಿದೆ.',
     },
   };
+
+  const norm = (hint || '').toLowerCase();
+  if (norm.includes('bhootanatha') || norm.includes('agastya')) return registry.bhootanatha_temple;
+  if (norm.includes('pattadakal') || norm.includes('virupaksha')) return registry.pattadakal_virupaksha;
+  if (norm.includes('aihole') || norm.includes('durga')) return registry.aihole_durga;
+  if (norm.includes('mahakuta') || norm.includes('pushkarini')) return registry.mahakuta_pool;
+  if (norm.includes('banashankari') || norm.includes('cholachagudd')) return registry.banashankari_temple;
+  if (norm.includes('kudalasangama') || norm.includes('basava')) return registry.kudalasangama;
+  if (norm.includes('ilkal') || norm.includes('saree') || norm.includes('handloom') || norm.includes('weaving')) return registry.ilkal_handloom;
+  if (norm.includes('badami') || norm.includes('cave') || norm.includes('nataraja')) return registry.badami_cave_1;
 
   return registry[hint] || registry.badami_cave_1;
 }
