@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Calendar, Clock, MapPin, Compass, Utensils, Sparkles, Copy, Check, Printer, ChevronRight, Navigation } from 'lucide-react';
 import { Language, ItineraryPlan } from '../types';
 import { TRANSLATIONS } from '../data/translations';
+import { getDefaultItinerary } from '../data/itineraryData';
 
 interface TripPlannerProps {
   language: Language;
@@ -40,10 +41,16 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ language }) => {
 
   const generatePlan = async () => {
     setIsGenerating(true);
+    const dayCount = duration === '1-day' ? 1 : duration === '3-day' ? 3 : 2;
+
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+
       const response = await fetch('/api/generate-itinerary', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           duration,
           interests: selectedInterests,
@@ -51,20 +58,23 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({ language }) => {
           language,
         }),
       });
+      clearTimeout(timeoutId);
 
-      if (!response.ok) {
-        throw new Error('Failed to generate');
-      }
-
-      const data = await response.json();
-      if (data.itinerary) {
-        setItinerary(data.itinerary);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.itinerary) {
+          setItinerary(data.itinerary);
+          return;
+        }
       }
     } catch (err) {
-      console.error('Plan generation failed:', err);
+      console.warn('Backend itinerary service unavailable, using curated itinerary engine:', err);
     } finally {
       setIsGenerating(false);
     }
+
+    // Curated local itinerary fallback
+    setItinerary(getDefaultItinerary(dayCount));
   };
 
   // Preload initial itinerary

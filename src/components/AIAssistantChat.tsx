@@ -85,35 +85,35 @@ export const AIAssistantChat: React.FC<AIAssistantChatProps> = ({
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Chat API returned error');
+      if (response.ok) {
+        const data = await response.json();
+        const assistantMsg: ChatMsg = {
+          id: (Date.now() + 1).toString(),
+          sender: 'assistant',
+          text: data.reply || 'Information retrieved.',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          source: data.source,
+        };
+
+        setMessages((prev) => [...prev, assistantMsg]);
+        return;
       }
-
-      const data = await response.json();
-      const assistantMsg: ChatMsg = {
-        id: (Date.now() + 1).toString(),
-        sender: 'assistant',
-        text: data.reply || 'Information retrieved.',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        source: data.source,
-      };
-
-      setMessages((prev) => [...prev, assistantMsg]);
     } catch (err) {
-      console.error('Chat error:', err);
-      const fallbackMsg: ChatMsg = {
-        id: (Date.now() + 1).toString(),
-        sender: 'assistant',
-        text:
-          language === 'kn'
-            ? 'ಕ್ಷಮಿಸಿ, ಮಾಹಿತಿಯನ್ನು ತರಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಬಾದಾಮಿ ಗುಹೆಗಳು, ಪಟ್ಟದಕಲ್ಲು ಅಥವಾ ಇಳಕಲ್ ಸೀರೆಗಳ ಬಗ್ಗೆ ಮತ್ತೆ ಕೇಳಿ.'
-            : 'Apologies, I encountered an issue retrieving that. Please ask about Badami caves, Pattadakal, Aihole, or Ilkal handlooms.',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      };
-      setMessages((prev) => [...prev, fallbackMsg]);
+      console.warn('Backend chat API offline, activating local heritage knowledge base:', err);
     } finally {
       setIsTyping(false);
     }
+
+    // Smart heritage knowledge fallback for Vercel/offline
+    const replyText = getSmartChatResponse(text, language);
+    const fallbackMsg: ChatMsg = {
+      id: (Date.now() + 1).toString(),
+      sender: 'assistant',
+      text: replyText,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      source: 'knowledge-base',
+    };
+    setMessages((prev) => [...prev, fallbackMsg]);
   };
 
   const handleVoiceSimulate = (promptText: string) => {
@@ -289,3 +289,59 @@ export const AIAssistantChat: React.FC<AIAssistantChatProps> = ({
     </div>
   );
 };
+
+function getSmartChatResponse(query: string, language: Language): string {
+  const q = query.toLowerCase();
+
+  if (q.includes('badami') || q.includes('cave') || q.includes('ಗುಹೆ') || q.includes('ಬಾದಾಮಿ')) {
+    if (q.includes('nataraja') || q.includes('ನಟರಾಜ') || q.includes('cave 1')) {
+      return language === 'kn'
+        ? 'ಬಾದಾಮಿ ಗುಹೆ ೧ ರ ೧೮ ತೋಳುಗಳ ನಟರಾಜನ ಶಿಲ್ಪವು ಭರತನಾಟ್ಯದ ೮೧ ನೃತ್ಯ ಮುದ್ರೆಗಳನ್ನು ಏಕಕಾಲದಲ್ಲಿ ಪ್ರದರ್ಶಿಸುತ್ತದೆ. ಕ್ರಿ.ಶ. ೬ನೇ ಶತಮಾನದ ಈ ಶಿಲ್ಪವನ್ನು ಕಣ್ತುಂಬಿಕೊಳ್ಳಲು ಬೆಳಗ್ಗೆ ೭:೦೦ ರಿಂದ ೯:೩೦ ರ ಸೂರ್ಯೋದಯ ಬೆಳಕಿನ ಸಮಯ ಅತಿ ಸೂಕ್ತ.'
+        : 'The 18-armed dancing Shiva Nataraja in Badami Cave 1 exhibits 81 classical Bharatanatyam mudras. Carved in the late 6th century by the early Chalukyas, the best time to photograph it is between 7:00 AM and 9:30 AM when morning sunlight illuminates the verandah.';
+    }
+    return language === 'kn'
+      ? 'ಬಾದಾಮಿಯಲ್ಲಿ ೪ ಮುಖ್ಯ ಗುಹೆಗಳಿವೆ: ಗುಹೆ ೧ (ಶೈವ/ನಟರಾಜ), ಗುಹೆ ೨ (ವೈಷ್ಣವ/ತ್ರಿವಿಕ್ರಮ), ಗುಹೆ ೩ (ಭವ್ಯ ವರಾಹ ಮತ್ತು ನರಸಿಂಹ, ಕ್ರಿ.ಶ. ೫೭೮), ಮತ್ತು ಗುಹೆ ೪ (ಜೈನ ತೀರ್ಥಂಕರರು). ಸಮಯ: ಬೆಳಗ್ಗೆ ೬:೦೦ ರಿಂದ ಸಂಜೆ ೬:೦೦. ಪ್ರವೇಶ ಶುಲ್ಕ: ಭಾರತೀಯರಿಗೆ ₹೨೫.'
+      : 'Badami features four monumental rock-cut caves: Cave 1 (Shaivite Nataraja), Cave 2 (Trivikrama), Cave 3 (grand Vishnu/Varaha, 578 CE), and Cave 4 (Jain Tirthankaras). Open daily 6:00 AM – 6:00 PM; entry fee is ₹25 for Indians, ₹300 for foreigners.';
+  }
+
+  if (q.includes('pattadakal') || q.includes('ಪಟ್ಟದಕಲ್ಲು') || q.includes('unesco') || q.includes('virupaksha')) {
+    return language === 'kn'
+      ? 'ಪಟ್ಟದಕಲ್ಲು ಯುನೆಸ್ಕೋ ವಿಶ್ವ ಪರಂಪರೆ ತಾಣವಾಗಿದ್ದು, ಮಲಪ್ರಭಾ ನದಿಯ ದಂಡೆಯಲ್ಲಿದೆ. ಇಲ್ಲಿನ ವಿರೂಪಾಕ್ಷ ದೇವಾಲಯವನ್ನು ಕಂಚಿಯ ಪಲ್ಲವರ ಮೇಲಿನ ವಿಜಯದ ನೆನಪಿನಲ್ಲಿ ರಾಣಿ ಲೋಕಮಹಾದೇವಿಯು ಕ್ರಿ.ಶ. ೭೪೦ ರಲ್ಲಿ ನಿರ್ಮಿಸಿದಳು. ಇದು ಎಲ್ಲೋರಾದ ಕೈಲಾಸ ದೇವಾಲಯಕ್ಕೆ ಮಾದರಿಯಾಗಿದೆ.'
+      : 'Pattadakal is a UNESCO World Heritage site situated along the Malaprabha River. Commissioned in 740 CE by Queen Lokamahadevi, the Virupaksha Temple marks the pinnacle of Chalukyan Dravida architecture and served as the architectural model for the Kailasa rock temple at Ellora.';
+  }
+
+  if (q.includes('aihole') || q.includes('ಐಹೊಳೆ') || q.includes('durga') || q.includes('ದುರ್ಗಾ')) {
+    return language === 'kn'
+      ? 'ಐಹೊಳೆಯನ್ನು "ಭಾರತೀಯ ದೇವಾಲಯ ವಾಸ್ತುಶಿಲ್ಪದ ತೊಟ್ಟಿಲು" ಎಂದು ಕರೆಯಲಾಗುತ್ತದೆ. ಇಲ್ಲಿ ೧೨೦ ಕ್ಕೂ ಹೆಚ್ಚು ಪ್ರಾಚೀನ ದೇವಾಲಯಗಳಿವೆ. ಗಜಪೃಷ್ಠ (ಆನೆ ಬೆನ್ನಿನ ಆಕಾರದ) ದುರ್ಗಾ ದೇವಾಲಯವು ಜಗತ್ತಿನಲ್ಲೇ ಅತಿ ವಿಶಿಷ್ಟ ವಾಸ್ತುಶಿಲ್ಪ ಹೊಂದಿದೆ.'
+      : 'Aihole is revered as the "Cradle of Indian Temple Architecture" featuring over 120 stone sanctuaries from 450–750 CE. Its famous Durga temple has a unique apsidal (horseshoe/gajaprishtha) ambulatory design resembling early Buddhist chaitya halls.';
+  }
+
+  if (q.includes('bhootanatha') || q.includes('ಭೂತನಾಥ') || q.includes('agastya') || q.includes('ಅಗಸ್ತ್ಯ') || q.includes('lake')) {
+    return language === 'kn'
+      ? 'ಅಗಸ್ತ್ಯ ಸರೋವರದ ದಂಡೆಯಲ್ಲಿರುವ ಭೂತನಾಥ ದೇವಾಲಯವು ಸಂಜೆಯ ಸೂರ್ಯಾಸ್ತಕ್ಕೆ ಅತ್ಯುತ್ತಮ ತಾಣವಾಗಿದೆ. ಸಂಜೆ ೫:೦೦ ಗಂಟೆಗೆ ಸರೋವರದ ನೀರಿನಲ್ಲಿ ಕೆಂಪು ಮರಳುಗಲ್ಲಿನ ಬಂಡೆಗಳು ಮತ್ತು ದೇವಾಲಯದ ಸುವರ್ಣ ಪ್ರತಿಬಿಂಬ ಅಪೂರ್ವ ನೋಟ ನೀಡುತ್ತದೆ.'
+      : 'Bhootanatha Temple sits on the eastern shore of sacred Agastya Lake. The best time to visit is around 5:00 PM during golden hour when the sandstone shrines cast amber reflections across the peaceful waters.';
+  }
+
+  if (q.includes('food') || q.includes('ಊಟ') || q.includes('rotti') || q.includes('ರೊಟ್ಟಿ') || q.includes('khanavali') || q.includes('ಖಾನಾವಳಿ')) {
+    return language === 'kn'
+      ? 'ಬಾದಾಮಿಯ ಸಾಂಪ್ರದಾಯಿಕ ಊಟ: ಬಿಸಿ ಜೋಳದ ರೊಟ್ಟಿ, ಎಣ್ಣೆಗಾಯಿ ಬದನೆಕಾಯಿ ಪಲ್ಯ, ಶೇಂಗಾ ಚಟ್ನಿ ಪುಡಿ, ಮೊಸರು, ಜುಣಕ ಮತ್ತು ಶೇಂಗಾ ಹೋಳಿಗೆ. ಬನಶಂಕರಿ ಖಾನಾವಳಿ ಅಥವಾ ಬಾದಾಮಿ ಸ್ಟೇಷನ್ ರಸ್ತೆಯ ಖಾನಾವಳಿಗಳಲ್ಲಿ ಅಪ್ಪಟ ಉತ್ತರ ಕರ್ನಾಟಕ ಊಟ ದೊರೆಯುತ್ತದೆ.'
+      : 'Must-try authentic Uttara Karnataka cuisine in Badami: hot Jolada Rotti (sorghum flatbread) with Ennegayi (stuffed baby brinjal), Shenga chutney powder with fresh curd, and Shenga Holige. Head to traditional Lingayat Khanavalis near Station Road for unlimited authentic thalis.';
+  }
+
+  if (q.includes('ilkal') || q.includes('ಇಳಕಲ್') || q.includes('saree') || q.includes('ಸೀರೆ') || q.includes('handloom') || q.includes('ಕೈಮಗ್ಗ')) {
+    return language === 'kn'
+      ? 'ಇಳಕಲ್ ಸೀರೆಗಳು ಅವುಗಳ ಕೆಂಪು "ತೊಪೆತೆನೆ" (ಅರಮನೆ ಗೋಪುರ) ಪಲ್ಲು ಮತ್ತು "ಕೊಂಡಿ" ಕಲಾ ತಂತ್ರಜ್ಞಾನಕ್ಕೆ ಜಿಐ ಟ್ಯಾಗ್ (GI Tag) ಪಡೆದಿವೆ. ಇಳಕಲ್‌ನ ನೇಕಾರರ ಸಹಕಾರ ಸಂಘಗಳಿಂದ ನೇರವಾಗಿ ಶುದ್ಧ ರೇಷ್ಮೆ ಮತ್ತು ಖಣಗಳನ್ನು ಮಧ್ಯವರ್ತಿಗಳಿಲ್ಲದೆ ಖರೀದಿಸಬಹುದು.'
+      : 'Ilkal Sarees are celebrated for their patented GI-tagged Topetenwe (palace tower) pallu and unique Kondi joint technique linking cotton body to pure silk pallu. You can visit the traditional weavers colony in Ilkal and Guledgudda to purchase authentic handloom sarees directly from artisan cooperatives.';
+  }
+
+  if (q.includes('best time') || q.includes('season') || q.includes('weather') || q.includes('ಯಾವಾಗ')) {
+    return language === 'kn'
+      ? 'ಬಾಗಲಕೋಟೆ ಪ್ರವಾಸಕ್ಕೆ ಅಕ್ಟೋಬರ್‌ನಿಂದ ಮಾರ್ಚ್ ಅತ್ಯುತ್ತಮ ಸಮಯ. ಈ ಸಮಯದಲ್ಲಿ ತಂಪು ಹವಾಮಾನವಿದ್ದು, ಶಿಲಾ ತಾಣಗಳನ್ನು ಆರಾಮವಾಗಿ ವೀಕ್ಷಿಸಬಹುದು. ಬೇಸಿಗೆಯಲ್ಲಿ (ಏಪ್ರಿಲ್-ಮೇ) ತಾಪಮಾನ ಹೆಚ್ಚಿರುತ್ತದೆ.'
+      : 'The ideal time to visit Bagalkote is from October to March, when Deccan temperatures range between 20°C and 30°C. Summers (April–May) can exceed 40°C, while post-monsoon (August–October) fills Agastya Lake beautifully.';
+  }
+
+  return language === 'kn'
+    ? 'ಬಾಗಲಕೋಟೆ ಯಾತ್ರಿಯಲ್ಲಿ ಬಾದಾಮಿ ಗುಹೆಗಳು, ಪಟ್ಟದಕಲ್ಲು ಯುನೆಸ್ಕೋ ತಾಣ, ಐಹೊಳೆ, ಭೂತನಾಥ ದೇವಾಲಯ, ಮಹಾಕೂಟ, ಕುಡಲಸಂಗಮ ಅಥವಾ ಇಳಕಲ್ ಸೀರೆಗಳ ಬಗ್ಗೆ ನಿಮಗೆ ಯಾವುದೇ ಮಾಹಿತಿ ಬೇಕಿದ್ದರೂ ಕೇಳಬಹುದು!'
+    : 'Welcome to Bagalkote YatriAI! Feel free to ask about Badami cave sculptures, UNESCO Pattadakal, Aihole architecture, Bhootanatha sunset, local Jolada Rotti dining, or direct Ilkal handloom purchases.';
+}
+
