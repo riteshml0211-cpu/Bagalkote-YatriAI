@@ -39,14 +39,25 @@ Your expertise covers:
 4. Mahakuta: Shaivite temple complex nestled in lush banyan groves. Sacred natural spring pool "Vishnu Pushkarini" where locals bathe, Mahakuteshwara temple with rare Ardhanareshwara sculpture.
 5. Banashankari Amma Temple: Ancient temple of Goddess Shakambhari / Banashankari, Haridra Tirtha pond, unique 360-degree deepa stambhas (lamp towers), annual Banashankari Jathre.
 6. Kudalasangama: Holy confluence of Krishna and Malaprabha rivers. Aikya Mantapa (final resting place) of 12th-century social reformer, philosopher, and Vachana poet Jagadjyothi Basaveshwara.
-7. Handlooms & Craft: GI-tagged Ilkal Sarees (Chikki Paras, Gomi border, signature red Topetenchi pallu made with Kondi technique), Guledgudda Khana (blouse fabrics), Kasuti embroidery. Direct artisan cooperatives.
-8. Local Cuisine: Authentic North Karnataka Oota: Jolada Rotti, Yennegayi (stuffed brinjal curry), Shenga (peanut) Chutney Pudi with curd, Ranjaka (red chilli paste), Sajje Rotti, Ilkal/Dharwad Peda, Shenga Holige.
-9. Practical Tourism Info:
+7. Hidden & Offbeat Places in Bagalkote (Beyond the mainstream circuit):
+   - Siddhankolla Canyon Gorge & Rock Waterfall Shrine (18 km from Badami): Secluded red sandstone canyon with a crystal perennial cascade, holy bathing pool, and 10th-century Shaivite rock sanctum once used by Nath Siddha yogis. Zero commercial crowds.
+   - Bilgi Arebhavanavi (32 km North of Badami): Spectacular 1588 CE subterranean multi-tiered royal stepwell built by Prince Khanderaya, featuring arched rest pavilions and rare bilingual foundation inscriptions carved in classical Old Kannada and Persian calligraphy.
+   - Guledgudda Sandstone Hill Fort (24 km East of Badami): Medieval hilltop bastions offering commanding 360-degree views over the Malaprabha plains, with historic town lanes where generational artisan families weave GI-tagged Guledgudda Khana blouse textiles on wooden pit-looms.
+   - Bachinagudda Megalithic Ridge (3 km from Pattadakal): 3,000-year-old Iron Age dolmens and stone cists beside a 7th-century Surya-Bhairava temple, providing an unmatched aerial panorama over the Pattadakal UNESCO temple towers.
+   - Naganatha Temple of Nagral (8 km East of Badami): Pristine, intact 8th-century early Chalukyan temple from King Vijayaditya's reign standing peacefully in rural sunflower and cotton agricultural fields.
+   - Shivayogamandira Hermitage (15 km from Badami): Serene 1909 riverside monastery founded by Hangal Sri Kumaraswamiji on the banks of Malaprabha River, with coconut orchards, peacocks, Sanskrit library, and sacred bathing ghats.
+   - Kendur Prehistoric Rock Art (8 km from Badami): Mesolithic rock shelters featuring 5,000-year-old ochre pictographs of hunters, humped bulls, and archers.
+8. Handlooms & Craft: GI-tagged Ilkal Sarees (Chikki Paras, Gomi border, signature red Topetenchi pallu made with Kondi technique), Guledgudda Khana (blouse fabrics), Kasuti embroidery. Direct artisan cooperatives.
+9. Local Cuisine: Authentic North Karnataka Oota: Jolada Rotti, Yennegayi (stuffed brinjal curry), Shenga (peanut) Chutney Pudi with curd, Ranjaka (red chilli paste), Sajje Rotti, Ilkal/Dharwad Peda, Shenga Holige.
+10. Practical Tourism Info:
    - Badami to Pattadakal: 22 km (~35 mins by cab/auto/KSRTC bus)
    - Pattadakal to Aihole: 14 km (~25 mins)
    - Badami to Banashankari: 5 km
    - Badami to Mahakuta: 14 km
    - Badami to Kudalasangama: ~70 km (~1.5 hours)
+   - Badami to Siddhankolla: 18 km (~30 mins)
+   - Badami to Bilgi: 32 km (~45 mins)
+   - Badami to Guledgudda: 24 km (~38 mins)
    - Timings: ASI monuments open 6:00 AM to 6:00 PM.
    - Entry fees: ASI ticket for Badami Caves ₹25 (Indians), ₹300 (Foreigners). Pattadakal UNESCO complex ₹40 (Indians), ₹600 (Foreigners).
    - Nearest Airport: Hubballi (HBX) ~105 km, Belagavi ~140 km.
@@ -103,8 +114,14 @@ app.post('/api/chat', async (req, res) => {
         reply = 'ಇಳಕಲ್ ಸೀರೆಗಳು ಬಾಗಲಕೋಟೆ ಜಿಲ್ಲೆಯ ಭೌಗೋಳಿಕ ಸೂಚ್ಯಂಕ (GI Tag #43) ಪಡೆದ ಪಾರಂಪರಿಕ ನೇಯ್ಗೆಯಾಗಿದೆ. ಇವುಗಳ ಪ್ರಮುಖ ವೈಶಿಷ್ಟ್ಯವೆಂದರೆ "ಟೋಪೆತೆಂಚಿ" ಕೆಂಪು ಸೆರಗು ಮತ್ತು "ಕೊಂಡಿ" ತಂತ್ರಜ್ಞಾನ. ಸ್ಥಳೀಯ ನೇಕಾರರ ಸಹಕಾರ ಸಂಘಗಳಿಂದ ನೇರವಾಗಿ ಖರೀದಿಸಿ ನೇಕಾರರಿಗೆ ಬೆಂಬಲ ನೀಡಿ.';
       } else if (lower.includes('food') || lower.includes('ಊಟ') || lower.includes('rotti') || lower.includes('ರೊಟ್ಟಿ')) {
         reply = 'ಉತ್ತರ ಕರ್ನಾಟಕದ ಸಾಂಪ್ರದಾಯಿಕ ಊಟ: ಬಿಸಿ ಜೋಳದ ರೊಟ್ಟಿ, ಎಣ್ಣೆಗಾಯಿ (ಬದನೆಕಾಯಿ ಪಲ್ಯ), ಶೇಂಗಾ ಚಟ್ನಿ ಪುಡಿ ಮೊಸರಿನೊಂದಿಗೆ, ರಂಜಕ ಖಾರ, ಸಜ್ಜೆ ರೊಟ್ಟಿ ಮತ್ತು ಸಿಹಿಗೆ ಇಳಕಲ್ ಪೇಡ ಅಥವಾ ಶೇಂಗಾ ಹೋಳಿಗೆ. ಬಾದಾಮಿ ಮತ್ತು ಬಾಗಲಕೋಟೆಯ ಖಾನಾವಳಿಗಳಲ್ಲಿ ಇದು ಲಭ್ಯ.';
+      } else if (lower.includes('hidden') || lower.includes('offbeat') || lower.includes('ಗುಪ್ತ') || lower.includes('ಅಪರೂಪ') || lower.includes('places') || lower.includes('ತಾಣ')) {
+        reply = 'ಬಾಗಲಕೋಟೆ ಜಿಲ್ಲೆಯ ಅದ್ಭುತ ೭ ಗುಪ್ತ ತಾಣಗಳು:\n• ಸಿದ್ಧನಕೊಳ್ಳ ಕಣಿವೆ & ಜಲಪಾತ (೧೮ ಕಿ.ಮೀ): ಕೆಂಪು ಬಂಡೆಗಳ ನಡುವೆ ಹರಿಯುವ ನೈಸರ್ಗಿಕ ಜಲಪಾತ ಮತ್ತು ಪ್ರಾಚೀನ ಶಿವಾಲಯ.\n• ಬಿಳಿಗಿ ಅರೆಭಾವನಾವಿ (೩೨ ಕಿ.ಮೀ): ಕ್ರಿ.ಶ. ೧೫೮೮ ರ ಕನ್ನಡ ಮತ್ತು ಪರ್ಷಿಯನ್ ಶಾಸನಗಳುಳ್ಳ ಭವ್ಯ ಮೆಟ್ಟಿಲು ಬಾವಿ.\n• ಗುಳೇದಗುಡ್ಡ ಕೋಟೆ & ಖಣ ನೇಯ್ಗೆ (೨೪ ಕಿ.ಮೀ): ಕಣಿವೆ ನೋಟದ ಬೆಟ್ಟದ ಕೋಟೆ ಮತ್ತು ಸಾಂಪ್ರದಾಯಿಕ ಖಣ ಮಗ್ಗಗಳು.\n• ಬಾಚಿನಗುಡ್ಡ (೨೪ ಕಿ.ಮೀ / ಪಟ್ಟದಕಲ್ಲಿನಿಂದ ೩ ಕಿ.ಮೀ): ೩೦೦೦ ವರ್ಷಗಳ ಶಿಲಾಯುಗದ ಕಲ್ಮನೆಗಳು & ಪಟ್ಟದಕಲ್ಲು ವೀಕ್ಷಣೆ.\n• ನಾಗರಾಳ ನಾಗನಾಥ ದೇವಾಲಯ (೮ ಕಿ.ಮೀ): ಹೊಲಗಳ ನಡುವಿನ ೮ನೇ ಶತಮಾನದ ಚಾಲುಕ್ಯ ಶಿವಾಲಯ.\n• ಶಿವಯೋಗಮಂದಿರ (೧೫ ಕಿ.ಮೀ): ಮಲಪ್ರಭಾ ನದೀತೀರದ ಪ್ರಶಾಂತ ಆಶ್ರಮ & ತಾಳೆಗರಿ ಗ್ರಂಥಾಲಯ.\n• ಕೆಂಡೂರು (೮ ಕಿ.ಮೀ): ೫೦೦೦ ವರ್ಷಗಳ ಪ್ರಾಚೀನ ಶಿಲಾ ವರ್ಣಚಿತ್ರಗಳು.';
+      } else if (lower.includes('siddhankolla') || lower.includes('ಸಿದ್ಧನಕೊಳ್ಳ')) {
+        reply = 'ಸಿದ್ಧನಕೊಳ್ಳವು ಬಾದಾಮಿಯಿಂದ ಕೇವಲ ೧೮ ಕಿ.ಮೀ ದೂರದಲ್ಲಿರುವ ಒಂದು ರಮಣೀಯ ಗುಪ್ತ ಕಣಿವೆ. ಇಲ್ಲಿ ದಟ್ಟ ಹಸಿರು ಮತ್ತು ಕೆಂಪು ಮರಳುಗಲ್ಲಿನ ಬಂಡೆಗಳ ನಡುವೆ ಸದಾ ತಿಳಿನೀರಿನ ಜಲಪಾತ ಹರಿಯುತ್ತದೆ. ನೈಸರ್ಗಿಕ ಕಲ್ಯಾಣಿಯ ಪಕ್ಕದಲ್ಲಿ ೧೦-೧೨ನೇ ಶತಮಾನದ ಸಂಗಮೇಶ್ವರ ದೇವಾಲಯವಿದೆ. ಯಾವುದೇ ಪ್ರವಾಸಿ ಗದ್ದಲವಿಲ್ಲದ ಶಾಂತ ತಾಣ.';
+      } else if (lower.includes('bilgi') || lower.includes('ಬಿಳಿಗಿ')) {
+        reply = 'ಬಿಳಿಗಿಯ ಅರೆಭಾವನಾವಿಯು ೧೫೮೮ ರಲ್ಲಿ ಯುವರಾಜ ಖಂಡೇರಾಯನಿಂದ ನಿರ್ಮಿತವಾದ ಅಪರೂಪದ ಮೆಟ್ಟಿಲು ಬಾವಿ (ಬಾವೋಲಿ). ಇದರಲ್ಲಿ ಕನ್ನಡ ಮತ್ತು ಪರ್ಷಿಯನ್ ಭಾಷೆಗಳೆರಡರಲ್ಲೂ ಕೆತ್ತಲಾದ ಐತಿಹಾಸಿಕ ಶಿಲಾಶಾಸನಗಳು ಹಾಗೂ ನೆಲದಡಿಯ ತಂಪಾದ ಕಲ್ಲಿನ ಕಮಾನುಗಳಿವೆ. ಬಾದಾಮಿಯಿಂದ ೩೨ ಕಿ.ಮೀ ದೂರದಲ್ಲಿದೆ.';
       } else {
-        reply = 'ಬಾಗಲಕೋಟೆ ಯಾತ್ರಿAI ಗೆ ಸ್ವಾಗತ! ನೀವು ಬಾದಾಮಿ ಗುಹೆಗಳು, ಪಟ್ಟದಕಲ್ಲು ಯುನೆಸ್ಕೋ ತಾಣ, ಐಹೊಳೆ, ಮಹಾಕೂಟ, ಬನಶಂಕರಿ ಮತ್ತು ಕೂಡಲಸಂಗಮದ ಬಗ್ಗೆ ಯಾವುದೇ ಮಾಹಿತಿ, ಟಿಕೆಟ್ ದರ ಮತ್ತು ಸಮಯದ ಬಗ್ಗೆ ಕೇಳಬಹುದು.';
+        reply = 'ಬಾಗಲಕೋಟೆ ಯಾತ್ರಿAI ಗೆ ಸ್ವಾಗತ! ನೀವು ಬಾದಾಮಿ, ಪಟ್ಟದಕಲ್ಲು, ಐಹೊಳೆಗಳೊಂದಿಗೆ ಸಿದ್ಧನಕೊಳ್ಳ ಜಲಪಾತ, ಬಿಳಿಗಿ ಮೆಟ್ಟಿಲು ಬಾವಿ, ಗುಳೇದಗುಡ್ಡ ಕೋಟೆ, ಬಾಚಿನಗುಡ್ಡದಂತಹ ಗುಪ್ತ ತಾಣಗಳ ಬಗ್ಗೆಯೂ ಮಾಹಿತಿ ಕೇಳಬಹುದು!';
       }
     } else {
       if (lower.includes('badami') || lower.includes('cave')) {
@@ -117,8 +134,14 @@ app.post('/api/chat', async (req, res) => {
         reply = 'Bagalkote is world-renowned for GI-tagged Ilkal Sarees (GI Tag #43), woven since the 8th century CE. Their hallmark is the rich crimson "Topetenchi" pallu joined via the ancient "Kondi" warp-interlocking technique and embroidered with Kasuti motifs. You can visit artisan weaver cooperatives in Ilkal and Guledgudda directly!';
       } else if (lower.includes('food') || lower.includes('cuisine') || lower.includes('eat') || lower.includes('rotti')) {
         reply = 'Authentic North Karnataka (Uttara Karnataka) cuisine is hearty and nutritious: freshly baked Jolada Rotti (jowar flatbread) served with Ennegayi (spiced stuffed baby brinjals), Shenga Chutney Pudi (roasted peanut powder) with fresh churned curd, fiery Ranjaka (red chilli paste), and desserts like Ilkal Peda and Shenga Holige. Look for traditional "Lingayat Khanavalis" in Badami and Bagalkote!';
+      } else if (lower.includes('hidden') || lower.includes('offbeat') || lower.includes('secret') || lower.includes('places') || lower.includes('gems')) {
+        reply = 'Here are 7 magnificent offbeat & hidden gems in Bagalkote beyond the typical tourist route:\n1. Siddhankolla Canyon Gorge (18 km): Secluded red sandstone ravine with a perennial forest waterfall, sacred pool, and ancient Shiva shrine.\n2. Bilgi Arebhavanavi (32 km): 1588 CE multi-tiered royal stepwell with arched galleries and dual Old Kannada & Persian inscriptions.\n3. Guledgudda Sandstone Hill Fort (24 km): Medieval fortress bastions overlooking the valley where GI-tagged Khana blouse fabrics are handwoven.\n4. Bachinagudda Megalithic Ridge (3 km from Pattadakal): 3,000-year-old prehistoric dolmens with an unmatched aerial view over the Pattadakal UNESCO spires.\n5. Naganatha Temple of Nagral (8 km): Intact 8th-century early Chalukyan temple standing in tranquil sunflower and cotton fields.\n6. Shivayogamandira Hermitage (15 km): Peaceful riverside monastery on the Malaprabha with coconut groves, peacocks, and palm-leaf manuscript library.\n7. Kendur Prehistoric Rock Art (8 km): Mesolithic rock shelters featuring 5,000-year-old ochre pictographs of hunters and humped bulls.';
+      } else if (lower.includes('siddhankolla')) {
+        reply = 'Siddhankolla is a hidden canyon gorge 18 km from Badami. A natural spring waterfall cascades over sandstone boulders into a sacred pool beside an ancient stone shrine of Lord Sangameshwara. It is shaded by wild fig trees and offers complete peace without tour buses or crowds.';
+      } else if (lower.includes('bilgi')) {
+        reply = 'Bilgi Arebhavanavi is a magnificent 16th-century stone stepwell located in Bilgi (32 km north of Badami). Built in 1588 CE by Prince Khanderaya, it features subterranean colonnaded chambers designed for natural cooling and remarkable bilingual foundation tablets inscribed in classical Kannada and Persian calligraphy.';
       } else {
-        reply = 'Welcome to Bagalkote YatriAI! I can help you with historical backstories, entry fees, operational hours, route distances between Badami-Pattadakal-Aihole, authentic Ilkal handloom cooperatives, and North Karnataka food guides. What would you like to explore?';
+        reply = 'Welcome to Bagalkote YatriAI! I can help you with historical backstories, entry fees, operational hours, route distances between Badami-Pattadakal-Aihole, authentic Ilkal handlooms, North Karnataka food guides, and hidden gems like Siddhankolla gorge and Bilgi stepwell. What would you like to explore?';
       }
     }
 

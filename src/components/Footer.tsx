@@ -82,6 +82,24 @@ export const Footer: React.FC<FooterProps> = ({ language, onNavigate }) => {
                   {language === 'kn' ? 'ಕೂಡಲಸಂಗಮ ಐಕ್ಯ ಮಂಟಪ' : 'Kudalasangama Aikya Mantapa'}
                 </button>
               </li>
+              <li className="pt-1">
+                <button
+                  onClick={() => onNavigate('circuit-map')}
+                  className="text-amber-300 hover:text-amber-200 font-semibold transition-colors text-left flex items-center gap-1"
+                >
+                  <span>📍</span>
+                  <span>{language === 'kn' ? 'ಲೈವ್ ಮಾರ್ಗ ನಕ್ಷೆ & GPS' : 'Live Circuit Map & GPS'}</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onNavigate('traveler-toolkit')}
+                  className="text-amber-300 hover:text-amber-200 font-semibold transition-colors text-left flex items-center gap-1"
+                >
+                  <span>✨</span>
+                  <span>{language === 'kn' ? 'ಕನ್ನಡ ಸಂಭಾಷಣೆ & ಪಾಸ್‌ಪೋರ್ಟ್' : 'Kannada Phrasebook & Passport'}</span>
+                </button>
+              </li>
             </ul>
           </div>
 

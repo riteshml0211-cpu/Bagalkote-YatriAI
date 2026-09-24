@@ -23,19 +23,30 @@ export const DestinationExplorer: React.FC<DestinationExplorerProps> = ({
   const [modalMonument, setModalMonument] = useState<Monument | null>(null);
   const t = TRANSLATIONS[language];
 
+  const hiddenGemsCount = MONUMENTS.filter((m) => m.isHiddenGem).length;
+
   const clusterFilters = [
-    { id: 'all', label: t.destinations.filters.all },
+    { id: 'all', label: `${t.destinations.filters.all} (${MONUMENTS.length})` },
+    {
+      id: 'hidden-gems',
+      label: language === 'kn' ? `✨ ಗುಪ್ತ ತಾಣಗಳು (${hiddenGemsCount})` : `✨ Offbeat & Hidden Gems (${hiddenGemsCount})`,
+      highlight: true,
+    },
     { id: 'Badami', label: t.destinations.filters.badami },
     { id: 'Pattadakal', label: t.destinations.filters.pattadakal },
     { id: 'Aihole', label: t.destinations.filters.aihole },
     { id: 'Mahakuta', label: t.destinations.filters.mahakuta },
     { id: 'Banashankari', label: t.destinations.filters.banashankari },
     { id: 'Kudalasangama', label: t.destinations.filters.kudalasangama },
+    { id: 'Bilgi', label: language === 'kn' ? 'ಬಿಳಿಗಿ' : 'Bilgi' },
+    { id: 'Guledgudda', label: language === 'kn' ? 'ಗುಳೇದಗುಡ್ಡ' : 'Guledgudda' },
   ];
 
   const filteredMonuments =
     selectedCluster === 'all'
       ? MONUMENTS
+      : selectedCluster === 'hidden-gems'
+      ? MONUMENTS.filter((m) => m.isHiddenGem)
       : MONUMENTS.filter((m) => m.cluster === selectedCluster);
 
   return (
@@ -53,6 +64,26 @@ export const DestinationExplorer: React.FC<DestinationExplorerProps> = ({
           <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed">
             {t.destinations.subtitle}
           </p>
+
+          {/* Offbeat & Hidden Places Spotlight Callout */}
+          <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-2 p-1.5 sm:p-2 bg-linear-to-r from-amber-500/10 via-orange-500/10 to-amber-500/10 border border-amber-300/80 rounded-2xl text-xs text-slate-700 shadow-xs max-w-2xl mx-auto">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-600 text-white font-bold text-[11px]">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{language === 'kn' ? '೭ ಗುಪ್ತ ತಾಣಗಳು' : '7 Hidden Gems'}</span>
+            </span>
+            <span className="font-medium text-slate-700">
+              {language === 'kn'
+                ? 'ಜನಸಂದಣಿಯಿಲ್ಲದ ಸಿದ್ಧನಕೊಳ್ಳ ಜಲಪಾತ, ಬಿಳಿಗಿ ಕಲ್ಯಾಣಿ, ಗುಳೇದಗುಡ್ಡ ಕೋಟೆ, ಬಾಚಿನಗುಡ್ಡ, ನಾಗರಾಳ, ಶಿವಯೋಗಮಂದಿರ & ಕೆಂಡೂರು.'
+                : 'Explore crowd-free Siddhankolla gorge, Bilgi stepwell, Guledgudda fort, Bachinagudda, Nagral & Kendur.'}
+            </span>
+            <button
+              type="button"
+              onClick={() => setSelectedCluster('hidden-gems')}
+              className="text-amber-800 hover:text-amber-950 font-bold underline cursor-pointer decoration-amber-500 underline-offset-2 ml-1"
+            >
+              {language === 'kn' ? 'ಗುಪ್ತ ತಾಣಗಳನ್ನು ವೀಕ್ಷಿಸಿ →' : 'View Offbeat Gems →'}
+            </button>
+          </div>
         </div>
 
         {/* Cluster Filter Buttons */}
@@ -106,12 +137,21 @@ export const DestinationExplorer: React.FC<DestinationExplorerProps> = ({
                       {language === 'kn' ? monument.clusterKn : monument.cluster}
                     </span>
 
-                    {monument.isUnesco && (
-                      <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-600/90 text-white text-[11px] font-bold shadow-xs">
-                        <Award className="w-3 h-3 text-yellow-300" />
-                        <span>UNESCO</span>
-                      </span>
-                    )}
+                    <div className="flex items-center gap-1.5">
+                      {monument.isUnesco && (
+                        <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-600/90 text-white text-[11px] font-bold shadow-xs">
+                          <Award className="w-3 h-3 text-yellow-300" />
+                          <span>UNESCO</span>
+                        </span>
+                      )}
+
+                      {monument.isHiddenGem && (
+                        <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-linear-to-r from-amber-400 to-amber-500 text-slate-950 text-[11px] font-bold shadow-xs">
+                          <Sparkles className="w-3 h-3 text-slate-950" />
+                          <span>{language === 'kn' ? 'ಗುಪ್ತ ತಾಣ' : 'Offbeat Gem'}</span>
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   {/* Distance badge */}

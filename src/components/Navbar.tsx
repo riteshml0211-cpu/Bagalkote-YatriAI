@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Globe, Compass, Camera, Sparkles, MapPin, Volume2, PhoneCall, Menu, X, ShoppingBag, Utensils } from 'lucide-react';
+import { Globe, Compass, Camera, Sparkles, MapPin, Volume2, PhoneCall, Menu, X, ShoppingBag, Utensils, Navigation, Award, Train } from 'lucide-react';
 import { Language, Monument } from '../types';
 import { TRANSLATIONS } from '../data/translations';
+import { HeritageSoundscape } from './HeritageSoundscape';
 
 interface NavbarProps {
   language: Language;
@@ -28,11 +29,14 @@ export const Navbar: React.FC<NavbarProps> = ({
   const t = TRANSLATIONS[language];
 
   const navItems = [
+    { id: 'transportation', label: t.nav.transportation, icon: Train },
     { id: 'destinations', label: t.nav.destinations, icon: Compass },
+    { id: 'circuit-map', label: t.nav.circuitMap, icon: MapPin },
     { id: 'scanner', label: t.nav.scanner, icon: Camera },
+    { id: 'planner', label: t.nav.planner, icon: Navigation },
     { id: 'weavers', label: t.nav.weavers, icon: ShoppingBag },
-    { id: 'planner', label: t.nav.planner, icon: MapPin },
     { id: 'cuisine', label: t.nav.cuisine, icon: Utensils },
+    { id: 'traveler-toolkit', label: t.nav.toolkit, icon: Award },
   ];
 
   const handleItemClick = (id: string) => {
@@ -91,7 +95,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Desktop Nav Items */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden xl:flex items-center gap-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeSection === item.id;
@@ -99,13 +103,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   key={item.id}
                   onClick={() => handleItemClick(item.id)}
-                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                     isActive
                       ? 'bg-amber-50 text-amber-900 font-semibold border border-amber-200'
                       : 'text-slate-700 hover:text-amber-900 hover:bg-slate-50'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-amber-600' : 'text-slate-400'}`} />
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-amber-600' : 'text-slate-400'}`} />
                   <span>{item.label}</span>
                 </button>
               );
@@ -132,6 +136,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </button>
             )}
+
+            {/* Heritage Soundscape Ambient Audio */}
+            <div className="hidden min-[460px]:block">
+              <HeritageSoundscape language={language} />
+            </div>
 
             {/* Language Switcher Pill */}
             <button
@@ -172,6 +181,35 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
+      {/* ALWAYS-VISIBLE ALL-FEATURES HORIZONTAL SCROLL BAR */}
+      {/* Ensures every single feature is immediately visible on the website across all devices without needing to open a hamburger menu */}
+      <div className="bg-slate-900 border-t border-amber-900/30 px-2 sm:px-4 py-1.5 shadow-inner">
+        <div className="max-w-7xl mx-auto flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth">
+          <div className="text-[10px] font-bold text-amber-400 uppercase tracking-widest shrink-0 px-2 py-0.5 rounded-sm bg-amber-500/15 border border-amber-400/30 flex items-center gap-1 mr-1">
+            <Sparkles className="w-3 h-3 text-amber-300" />
+            <span>{language === 'kn' ? 'ವೈಶಿಷ್ಟ್ಯಗಳು' : 'All Features'}</span>
+          </div>
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeSection === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleItemClick(item.id)}
+                className={`shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-amber-500 text-slate-950 font-bold shadow-xs scale-102'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800 bg-slate-800/60 border border-slate-700/60'
+                }`}
+              >
+                <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-slate-950' : 'text-amber-400'}`} />
+                <span className="whitespace-nowrap">{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-white border-b border-amber-900/10 px-4 pt-2 pb-4 space-y-1 shadow-lg animate-in slide-in-from-top-2">
@@ -191,7 +229,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             );
           })}
-          <div className="pt-2 border-t border-slate-100 mt-2">
+          <div className="pt-2 border-t border-slate-100 mt-2 flex items-center justify-between px-1">
+            <HeritageSoundscape language={language} />
             <a
               href="tel:18004254254"
               className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:text-amber-800"

@@ -201,6 +201,56 @@ export const MONUMENT_REGISTRY: Record<string, MonumentScanResult> = {
     audioSnippetKn:
       'ಇಳಕಲ್‌ನ ಗಲ್ಲಿಗಲ್ಲಿಗಳಲ್ಲಿ ಕೇಳಿಬರುವ ಮಗ್ಗದ ಸದ್ದು ಶತಮಾನಗಳ ಕಲಾ ಪರಂಪರೆಯನ್ನು ನೆನಪಿಸುತ್ತದೆ. ಶುದ್ಧ ರೇಷ್ಮೆ ಮತ್ತು ಹತ್ತಿಯ ನೂಲುಗಳಿಂದ ನೇಯುವ ಈ ಸೀರೆಗಳು ಕರ್ನಾಟಕರ ಹೆಮ್ಮೆಯ ಕರಕುಶಲ ಕಲೆ.',
   },
+  siddhankolla_gorge: {
+    monumentName: 'Siddhankolla Canyon Gorge & Rock Waterfall Shrine',
+    monumentNameKn: 'ಸಿದ್ಧನಕೊಳ್ಳ ಕಣಿವೆ & ಜಲಪಾತ ಸನ್ನಿಧಿ',
+    location: 'Siddhankolla Valley (18 km from Badami)',
+    century: '10th to 12th Century CE',
+    dynasty: 'Kalyana Chalukyas & Nath Siddha Yogis',
+    architecturalStyle: 'Natural Sandstone Gorge with Chiseled Rock-cut Linga Sanctum',
+    confidence: 99.1,
+    sourceImage: '/assets/monuments/mahakuta_temple.jpg',
+    keyHighlights: [
+      'Hidden perennial waterfall cascading into a pristine sandstone forest pool',
+      'Ancient stone shrine of Lord Sangameshwara nestled inside secluded rock bluffs',
+      'Peaceful meditation sanctuary untouched by commercial tourism',
+    ],
+    historicalSignificance:
+      'A sacred hermitage of Nath Siddha ascetics dating back a thousand years. Tucked inside a deep red sandstone gorge, it provides absolute tranquility and natural beauty.',
+    historicalSignificanceKn:
+      'ನಾಥ ಸಿದ್ಧ ಮುನಿಗಳ ಪ್ರಾಚೀನ ತಪೋಭೂಮಿ. ಕೆಂಪು ಕಣಿವೆಯ ನೈಸರ್ಗಿಕ ಜಲಧಾರೆ ಮತ್ತು ಬಂಡೆ ಕೊರೆದ ಸಂಗಮೇಶ್ವರ ಲಿಂಗ ಪ್ರವಾಸಿಗರಿಗೆ ಅಧ್ಯಾತ್ಮಿಕ ಶಾಂತಿ ನೀಡುತ್ತದೆ.',
+    visitorTip:
+      'Visit in the morning between 7:30 AM and 11:00 AM; wear shoes with good rubber grip.',
+    audioSnippetEn:
+      'Welcome to Siddhankolla, one of Bagalkote’s best-kept secrets. Listen to the gentle water rushing down red sandstone boulders into this holy pool, revered for centuries by forest yogis.',
+    audioSnippetKn:
+      'ಸಿದ್ಧನಕೊಳ್ಳದ ರಮಣೀಯ ಕಣಿವೆಯ ಸನ್ನಿಧಾನಕ್ಕೆ ಸ್ವಾಗತ. ಕೆಂಪು ಬಂಡೆಗಳ ನಡುವೆ ಹರಿಯುವ ತಿಳಿನೀರಿನ ನೈಸರ್ಗಿಕ ಜಲಪಾತ ಮತ್ತು ಪ್ರಾಚೀನ ಶಿವಾಲಯ ಇಲ್ಲಿನ ಪ್ರಮುಖ ಆಕರ್ಷಣೆ.',
+  },
+  bilgi_stepwell: {
+    monumentName: 'Bilgi Arebhavanavi (16th-Century Royal Stepwell)',
+    monumentNameKn: 'ಬಿಳಿಗಿ ಅರೆಭಾವನಾವಿ ಐತಿಹಾಸಿಕ ಕಲ್ಯಾಣಿ',
+    location: 'Bilgi Town (32 km North of Badami)',
+    century: '1588 CE (Late Vijayanagara / Bilgi Nayaka Era)',
+    dynasty: 'Bilgi Nayakas (Prince Khanderaya)',
+    architecturalStyle: 'Deccan Multi-Storey Stepped Baoli with Arched Pavilions',
+    confidence: 99.4,
+    sourceImage: '/assets/monuments/banashankari_deepastambha.jpg',
+    keyHighlights: [
+      'Dual bilingual foundation stones chiseled in Old Kannada and Persian calligraphy',
+      'Multi-tiered subterranean colonnaded chambers designed for natural airflow and cooling',
+      'Perennial underground aquifers feeding historic stone balustrades',
+    ],
+    historicalSignificance:
+      'Built in 1588 CE by Prince Khanderaya, this architectural marvel served as a cool public retreat for travelers and displays the rich cultural synthesis of medieval North Karnataka.',
+    historicalSignificanceKn:
+      'ಕ್ರಿ.ಶ. ೧೫೮೮ ರಲ್ಲಿ ಯುವರಾಜ ಖಂಡೇರಾಯನಿಂದ ನಿರ್ಮಿತವಾದ ಈ ಮೆಟ್ಟಿಲು ಬಾವಿಯಲ್ಲಿ ಕನ್ನಡ ಮತ್ತು ಪರ್ಷಿಯನ್ ಭಾಷೆಗಳ ಅಪರೂಪದ ಶಿಲಾಶಾಸನಗಳಿವೆ. ನೆಲದಡಿಯ ತಂಪು ಹವೆಯ ಮಂಟಪಗಳು ವಾಸ್ತುಶಿಲ್ಪದ ಕೌಶಲ್ಯವನ್ನು ಸಾರುತ್ತವೆ.',
+    visitorTip:
+      'Take photos from the top stone gallery looking down the symmetrical steps for dramatic geometric perspective.',
+    audioSnippetEn:
+      'You are admiring the 1588 CE Arebhavanavi stepwell in Bilgi. Descend the stone steps into this subterranean oasis, engineered with shaded rest galleries and bilingual inscriptions.',
+    audioSnippetKn:
+      'ಬಿಳಿಗಿಯ ಐತಿಹಾಸಿಕ ಅರೆಭಾವನಾವಿ ಕಲ್ಯಾಣಿಗೆ ಸ್ವಾಗತ. ೧೬ನೇ ಶತಮಾನದ ಈ ಕಲ್ಲಿನ ಮೆಟ್ಟಿಲು ಬಾವಿಯ ಕಮಾನುಗಳು ಮತ್ತು ಕಲಾತ್ಮಕ ವಿನ್ಯಾಸ ಪ್ರಾಚೀನ ನೀರಿನ ನಿರ್ವಹಣೆಗೆ ಸಾಕ್ಷಿಯಾಗಿದೆ.',
+  },
 };
 
 /**
@@ -233,6 +283,12 @@ export async function identifyMonumentClientSide(
     }
     if (norm.includes('ilkal') || norm.includes('saree') || norm.includes('handloom') || norm.includes('weaving')) {
       return { ...MONUMENT_REGISTRY.ilkal_handloom, sourceImage: base64OrUrl };
+    }
+    if (norm.includes('siddhankolla') || norm.includes('gorge') || norm.includes('waterfall') || norm.includes('ಸಿದ್ಧನಕೊಳ್ಳ')) {
+      return { ...MONUMENT_REGISTRY.siddhankolla_gorge, sourceImage: base64OrUrl };
+    }
+    if (norm.includes('bilgi') || norm.includes('stepwell') || norm.includes('arebhavanavi') || norm.includes('ಬಿಳಿಗಿ')) {
+      return { ...MONUMENT_REGISTRY.bilgi_stepwell, sourceImage: base64OrUrl };
     }
     if (norm.includes('badami') || norm.includes('cave') || norm.includes('nataraja')) {
       return { ...MONUMENT_REGISTRY.badami_cave_1, sourceImage: base64OrUrl };

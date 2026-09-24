@@ -1,20 +1,36 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Sparkles, Phone, MapPin, Award, Heart, Utensils, Home, Star, ExternalLink, ShieldCheck } from 'lucide-react';
+import { ShoppingBag, Sparkles, Phone, MapPin, Award, Heart, Utensils, Home, Star, ExternalLink, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { Language } from '../types';
 import { ARTISAN_COOPERATIVES, LOCAL_CUISINE, HOMESTAYS } from '../data/heritageData';
 import { TRANSLATIONS } from '../data/translations';
+import { GIAuthenticityValidator } from './GIAuthenticityValidator';
 
 interface WeaversHubProps {
   language: Language;
   onAskAi: (topic: string) => void;
+  activeTab?: 'sarees' | 'cooperatives' | 'validator' | 'cuisine' | 'homestays';
+  onTabChange?: (tab: 'sarees' | 'cooperatives' | 'validator' | 'cuisine' | 'homestays') => void;
 }
 
-export const WeaversHub: React.FC<WeaversHubProps> = ({ language, onAskAi }) => {
-  const [activeTab, setActiveTab] = useState<'sarees' | 'cooperatives' | 'cuisine' | 'homestays'>('sarees');
+export const WeaversHub: React.FC<WeaversHubProps> = ({
+  language,
+  onAskAi,
+  activeTab: controlledTab,
+  onTabChange,
+}) => {
+  const [internalTab, setInternalTab] = useState<'sarees' | 'cooperatives' | 'validator' | 'cuisine' | 'homestays'>('sarees');
+  const activeTab = controlledTab ?? internalTab;
+
+  const handleTabClick = (tab: 'sarees' | 'cooperatives' | 'validator' | 'cuisine' | 'homestays') => {
+    setInternalTab(tab);
+    onTabChange?.(tab);
+  };
+
   const t = TRANSLATIONS[language];
 
   return (
-    <section id="weavers" className="py-16 sm:py-24 bg-[#FDFBF7] border-t border-b border-amber-900/10">
+    <section id="weavers" className="py-16 sm:py-24 bg-[#FDFBF7] border-t border-b border-amber-900/10 relative">
+      <div id="cuisine" className="absolute top-0 pointer-events-none" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-10">
@@ -33,7 +49,7 @@ export const WeaversHub: React.FC<WeaversHubProps> = ({ language, onAskAi }) => 
         {/* Section Navigation Tabs */}
         <div className="flex items-center justify-start sm:justify-center gap-1.5 sm:gap-2 overflow-x-auto pb-3 mb-8 sm:mb-10 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
           <button
-            onClick={() => setActiveTab('sarees')}
+            onClick={() => handleTabClick('sarees')}
             className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer shrink-0 ${
               activeTab === 'sarees'
                 ? 'bg-amber-700 text-white shadow-md'
@@ -45,7 +61,7 @@ export const WeaversHub: React.FC<WeaversHubProps> = ({ language, onAskAi }) => 
           </button>
 
           <button
-            onClick={() => setActiveTab('cooperatives')}
+            onClick={() => handleTabClick('cooperatives')}
             className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer shrink-0 ${
               activeTab === 'cooperatives'
                 ? 'bg-amber-700 text-white shadow-md'
@@ -57,7 +73,19 @@ export const WeaversHub: React.FC<WeaversHubProps> = ({ language, onAskAi }) => 
           </button>
 
           <button
-            onClick={() => setActiveTab('cuisine')}
+            onClick={() => handleTabClick('validator')}
+            className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer shrink-0 ${
+              activeTab === 'validator'
+                ? 'bg-emerald-700 text-white shadow-md'
+                : 'bg-emerald-50 text-emerald-900 hover:bg-emerald-100 border border-emerald-300'
+            }`}
+          >
+            <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
+            <span>{language === 'kn' ? '✨ ಅಸಲಿ ಸೀರೆ ಪರೀಕ್ಷಕ' : '✨ GI Authenticity Validator'}</span>
+          </button>
+
+          <button
+            onClick={() => handleTabClick('cuisine')}
             className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer shrink-0 ${
               activeTab === 'cuisine'
                 ? 'bg-amber-700 text-white shadow-md'
@@ -69,7 +97,7 @@ export const WeaversHub: React.FC<WeaversHubProps> = ({ language, onAskAi }) => 
           </button>
 
           <button
-            onClick={() => setActiveTab('homestays')}
+            onClick={() => handleTabClick('homestays')}
             className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer shrink-0 ${
               activeTab === 'homestays'
                 ? 'bg-amber-700 text-white shadow-md'
@@ -227,6 +255,13 @@ export const WeaversHub: React.FC<WeaversHubProps> = ({ language, onAskAi }) => 
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Tab: GI Authenticity Validator */}
+        {activeTab === 'validator' && (
+          <div className="animate-in fade-in duration-300">
+            <GIAuthenticityValidator language={language} onAskAi={onAskAi} />
           </div>
         )}
 

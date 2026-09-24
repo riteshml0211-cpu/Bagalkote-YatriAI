@@ -75,6 +75,20 @@ const PRESET_SAMPLES: PresetSample[] = [
     landmarkHint: 'ilkal_handloom',
     image: '/assets/monuments/ilkal_weaving.jpg',
   },
+  {
+    id: 'sample-siddhankolla',
+    nameEn: '✨ Siddhankolla Waterfall Gorge',
+    nameKn: '✨ ಸಿದ್ಧನಕೊಳ್ಳ ಜಲಪಾತ ಕಣಿವೆ',
+    landmarkHint: 'siddhankolla_gorge',
+    image: '/assets/monuments/mahakuta_temple.jpg',
+  },
+  {
+    id: 'sample-bilgi',
+    nameEn: '✨ Bilgi 1588 CE Royal Stepwell',
+    nameKn: '✨ ಬಿಳಿಗಿ ಅರೆಭಾವನಾವಿ ಕಲ್ಯಾಣಿ',
+    landmarkHint: 'bilgi_stepwell',
+    image: '/assets/monuments/banashankari_deepastambha.jpg',
+  },
 ];
 
 export const MonumentScanner: React.FC<MonumentScannerProps> = ({

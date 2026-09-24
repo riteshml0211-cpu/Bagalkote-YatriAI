@@ -4,7 +4,7 @@ export interface Monument {
   id: string;
   name: string;
   nameKn: string;
-  cluster: 'Badami' | 'Pattadakal' | 'Aihole' | 'Mahakuta' | 'Banashankari' | 'Kudalasangama';
+  cluster: 'Badami' | 'Pattadakal' | 'Aihole' | 'Mahakuta' | 'Banashankari' | 'Kudalasangama' | 'HiddenGems' | 'Guledgudda' | 'Bilgi';
   clusterKn: string;
   tagline: string;
   taglineKn: string;
@@ -39,6 +39,7 @@ export interface Monument {
   visitorTipsEn: string[];
   visitorTipsKn: string[];
   isUnesco?: boolean;
+  isHiddenGem?: boolean;
 }
 
 export interface ArtisanCooperative {

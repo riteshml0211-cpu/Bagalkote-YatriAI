@@ -3,8 +3,12 @@ import { Navbar } from './components/Navbar';
 import { HeroBanner } from './components/HeroBanner';
 import { MonumentScanner } from './components/MonumentScanner';
 import { DestinationExplorer } from './components/DestinationExplorer';
+import { CircuitMapExplorer } from './components/CircuitMapExplorer';
+import { TransportationHub } from './components/TransportationHub';
+import { AllFeaturesShowcase } from './components/AllFeaturesShowcase';
 import { WeaversHub } from './components/WeaversHub';
 import { TripPlanner } from './components/TripPlanner';
+import { TravelerToolkit } from './components/TravelerToolkit';
 import { AudioGuidePlayer } from './components/AudioGuidePlayer';
 import { AIAssistantChat } from './components/AIAssistantChat';
 import { Footer } from './components/Footer';
@@ -20,6 +24,8 @@ export default function App() {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatInitialQuestion, setChatInitialQuestion] = useState<string | null>(null);
+  const [weaversTab, setWeaversTab] = useState<'sarees' | 'cooperatives' | 'validator' | 'cuisine' | 'homestays'>('sarees');
+  const [departureCity, setDepartureCity] = useState<string>('Bengaluru');
 
   const t = TRANSLATIONS[language];
 
@@ -30,10 +36,35 @@ export default function App() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
+    if (sectionId === 'validator') {
+      setWeaversTab('validator');
+      const elem = document.getElementById('weavers');
+      if (elem) {
+        elem.scrollIntoView({ behavior: 'smooth' });
+      }
+      return;
+    }
+    if (sectionId === 'cuisine') {
+      setWeaversTab('cuisine');
+      const elem = document.getElementById('weavers');
+      if (elem) {
+        elem.scrollIntoView({ behavior: 'smooth' });
+      }
+      return;
+    }
+    if (sectionId === 'weavers') {
+      setWeaversTab('sarees');
+    }
     const elem = document.getElementById(sectionId);
     if (elem) {
       elem.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  // Departure city selection handler
+  const handleSelectDepartureCity = (city: string) => {
+    setDepartureCity(city);
+    scrollToSection('transportation');
   };
 
   // Play monument audio guide
@@ -93,11 +124,26 @@ export default function App() {
   };
 
   // Quick action from hero
-  const handleQuickAction = (action: 'scanner' | 'destinations' | 'planner' | 'weavers' | 'audio') => {
+  const handleQuickAction = (
+    action:
+      | 'scanner'
+      | 'destinations'
+      | 'planner'
+      | 'weavers'
+      | 'cuisine'
+      | 'audio'
+      | 'circuit-map'
+      | 'traveler-toolkit'
+      | 'validator'
+      | 'transportation'
+  ) => {
     if (action === 'audio') {
       // Play Badami caves audio by default
       const defaultMon = MONUMENTS[0];
       handlePlayMonumentAudio(defaultMon);
+    } else if (action === 'cuisine') {
+      setWeaversTab('cuisine');
+      scrollToSection('weavers');
     } else {
       scrollToSection(action);
     }
@@ -116,10 +162,18 @@ export default function App() {
 
     if (matched) {
       scrollToSection('destinations');
+    } else if (lower.includes('transport') || lower.includes('reach') || lower.includes('train') || lower.includes('bus') || lower.includes('flight') || lower.includes('cab') || lower.includes('taxi') || lower.includes('ksrtc') || lower.includes('irctc') || lower.includes('auto') || lower.includes('ರೈಲು') || lower.includes('ಬಸ್') || lower.includes('ಸಾರಿಗೆ') || lower.includes('ವಿಮಾನ') || lower.includes('ಹೋಗುವುದು ಹೇಗೆ')) {
+      scrollToSection('transportation');
+    } else if (lower.includes('map') || lower.includes('route') || lower.includes('ನಕ್ಷೆ') || lower.includes('ದಾರಿ')) {
+      scrollToSection('circuit-map');
+    } else if (lower.includes('phrase') || lower.includes('kannada') || lower.includes('ಮಾತು') || lower.includes('passport') || lower.includes('stamp') || lower.includes('ಪಾಸ್‌ಪೋರ್ಟ್') || lower.includes('offline') || lower.includes('emergency') || lower.includes('sun') || lower.includes('golden') || lower.includes('ಬಿಸಿಲು')) {
+      scrollToSection('traveler-toolkit');
     } else if (lower.includes('saree') || lower.includes('ಸೀರೆ') || lower.includes('weaver')) {
+      setWeaversTab('sarees');
       scrollToSection('weavers');
-    } else if (lower.includes('food') || lower.includes('rotti') || lower.includes('ರೊಟ್ಟಿ')) {
-      scrollToSection('weavers');
+    } else if (lower.includes('food') || lower.includes('rotti') || lower.includes('ರೊಟ್ಟಿ') || lower.includes('cuisine') || lower.includes('oota') || lower.includes('ಊಟ')) {
+      setWeaversTab('cuisine');
+      scrollToSection('cuisine');
     } else {
       // Ask AI
       setChatInitialQuestion(query);
@@ -161,19 +215,30 @@ export default function App() {
         onOpenChat={() => setIsChatOpen(true)}
       />
 
-      <main className="flex-1 w-full overflow-x-hidden">
-        {/* Hero Banner Section */}
+      <main className={`flex-1 w-full overflow-x-hidden ${activeMonument ? 'pb-32 sm:pb-24' : ''}`}>
+        {/* Hero Banner Section with integrated departure search & all features quick rail */}
         <HeroBanner
           language={language}
           onQuickAction={handleQuickAction}
           onSearch={handleSearch}
+          onSelectDepartureCity={handleSelectDepartureCity}
         />
 
-        {/* AI Monument Visual Scanner Section */}
-        <MonumentScanner
+        {/* All Features Showcase & Digital Services Hub */}
+        {/* Directly visible on the website so users see all features immediately when they enter */}
+        <AllFeaturesShowcase
           language={language}
-          onPlayAudioSnippet={handlePlayCustomSnippet}
-          onAskAiAboutMonument={handleAskAiAboutMonument}
+          onNavigate={scrollToSection}
+          onSelectDepartureCity={handleSelectDepartureCity}
+          onOpenChat={() => setIsChatOpen(true)}
+          onPlayAudioGuide={() => handlePlayMonumentAudio(MONUMENTS[0])}
+        />
+
+        {/* Multi-Modal Transportation & Route Planner */}
+        {/* Placed prominently near the top so users can immediately plan how to reach Badami */}
+        <TransportationHub
+          language={language}
+          initialDepartureCity={departureCity}
         />
 
         {/* Interactive Destinations Explorer */}
@@ -188,9 +253,24 @@ export default function App() {
           }}
         />
 
+        {/* Interactive Circuit Map & GPS Driving Routes */}
+        <CircuitMapExplorer
+          language={language}
+          onPlayMonumentAudio={handlePlayMonumentAudio}
+        />
+
+        {/* AI Monument Visual Scanner Section */}
+        <MonumentScanner
+          language={language}
+          onPlayAudioSnippet={handlePlayCustomSnippet}
+          onAskAiAboutMonument={handleAskAiAboutMonument}
+        />
+
         {/* Weavers Hub & Inclusive Growth Section */}
         <WeaversHub
           language={language}
+          activeTab={weaversTab}
+          onTabChange={setWeaversTab}
           onAskAi={(topic) => {
             setChatInitialQuestion(topic);
             setIsChatOpen(true);
@@ -205,6 +285,12 @@ export default function App() {
             setChatInitialQuestion(topic);
             setIsChatOpen(true);
           }}
+        />
+
+        {/* Comprehensive Traveler Toolkit & Heritage Passport */}
+        <TravelerToolkit
+          language={language}
+          onPlaySpeech={handlePlaySpeech}
         />
       </main>
 
