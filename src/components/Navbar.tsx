@@ -74,22 +74,25 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Brand Logo */}
           <div
             onClick={() => handleItemClick('hero')}
-            className="flex items-center gap-2 sm:gap-3 cursor-pointer group select-none min-w-0 flex-1 sm:flex-initial"
+            className="flex items-center gap-2.5 sm:gap-3 cursor-pointer group select-none shrink-0"
           >
-            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-linear-to-br from-amber-600 via-amber-700 to-stone-900 flex items-center justify-center shadow-md shadow-amber-900/20 group-hover:scale-105 transition-transform duration-200 shrink-0">
-              <span className="text-white font-serif font-black text-lg sm:text-xl tracking-tighter">ಯಾ</span>
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-linear-to-br from-amber-600 via-amber-700 to-amber-950 flex items-center justify-center shadow-md shadow-amber-950/20 border border-amber-400/40 group-hover:scale-105 transition-transform duration-200 shrink-0">
+              <span className="text-amber-100 font-serif font-black text-xl sm:text-2xl leading-none drop-shadow-xs">
+                {language === 'kn' ? 'ಯಾ' : 'ಬಾ'}
+              </span>
             </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
-                <span className="font-serif font-bold text-base sm:text-xl text-slate-900 tracking-tight truncate">
-                  {t.brandName}
+            <div className="shrink-0 flex flex-col justify-center">
+              <div className="flex items-baseline gap-1 whitespace-nowrap leading-none">
+                <span className="font-serif font-black text-base sm:text-xl text-slate-900 tracking-tight">
+                  {language === 'kn' ? 'ಬಾಗಲಕೋಟೆ' : 'Bagalkote'}
                 </span>
-                <span className="hidden min-[420px]:inline-block px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold rounded-sm bg-amber-100 text-amber-800 uppercase tracking-widest border border-amber-300/60 shrink-0">
-                  {language === 'kn' ? 'ಸ್ಮಾರ್ಟ್ ಗೈಡ್' : 'AI Portal'}
+                <span className="font-serif font-extrabold text-sm sm:text-lg text-amber-700">
+                  {language === 'kn' ? 'ಯಾತ್ರಿ' : 'Yatri'}
+                  <span className="text-amber-600 font-black">AI</span>
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 hidden sm:block truncate">
-                {language === 'kn' ? 'ಬಾದಾಮಿ ಚಾಲುಕ್ಯ ಪರಂಪರೆ & ಇಳಕಲ್ ಕೈಮಗ್ಗ' : 'Chalukya Heritage & Ilkal Handlooms'}
+              <p className="text-[10.5px] text-slate-500 font-medium tracking-wide mt-1 hidden sm:block whitespace-nowrap">
+                {language === 'kn' ? 'ಚಾಲುಕ್ಯ ಪರಂಪರೆ • ಬಾದಾಮಿ • ಪಟ್ಟದಕಲ್ಲು' : 'Chalukya Heritage • Badami • Pattadakal'}
               </p>
             </div>
           </div>
@@ -177,7 +180,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Mobile Menu Hamburger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-1.5 sm:p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors shrink-0"
+              className="xl:hidden p-1.5 sm:p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors shrink-0"
               aria-label="Open navigation menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

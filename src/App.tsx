@@ -5,7 +5,6 @@ import { MonumentScanner } from './components/MonumentScanner';
 import { DestinationExplorer } from './components/DestinationExplorer';
 import { CircuitMapExplorer } from './components/CircuitMapExplorer';
 import { TransportationHub } from './components/TransportationHub';
-import { AllFeaturesShowcase } from './components/AllFeaturesShowcase';
 import { WeaversHub } from './components/WeaversHub';
 import { TripPlanner } from './components/TripPlanner';
 import { TravelerToolkit } from './components/TravelerToolkit';
@@ -16,7 +15,7 @@ import { Footer } from './components/Footer';
 import { Language, Monument } from './types';
 import { MONUMENTS } from './data/heritageData';
 import { TRANSLATIONS } from './data/translations';
-import { Sparkles, MessageSquare } from 'lucide-react';
+import { Sparkles, MessageSquare, ArrowUp } from 'lucide-react';
 
 export default function App() {
   const [language, setLanguage] = useState<Language>('en');
@@ -25,11 +24,33 @@ export default function App() {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isPocketGuideOpen, setIsPocketGuideOpen] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
   const [chatInitialQuestion, setChatInitialQuestion] = useState<string | null>(null);
   const [weaversTab, setWeaversTab] = useState<'sarees' | 'cooperatives' | 'validator' | 'cuisine' | 'homestays'>('sarees');
   const [departureCity, setDepartureCity] = useState<string>('Bengaluru');
 
   const t = TRANSLATIONS[language];
+
+  // Scroll listener to toggle Back to Top button
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 350) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
 
   // Scroll to section smoothly
   const scrollToSection = (sectionId: string) => {
@@ -279,15 +300,7 @@ export default function App() {
           onPlaySpeech={handlePlaySpeech}
         />
 
-        {/* 8. Everything You Need For Your Chalukya Journey (All Features Showcase & Transportation Hub) */}
-        <AllFeaturesShowcase
-          language={language}
-          onNavigate={scrollToSection}
-          onSelectDepartureCity={handleSelectDepartureCity}
-          onOpenChat={() => setIsChatOpen(true)}
-          onPlayAudioGuide={() => handlePlayMonumentAudio(MONUMENTS[0])}
-        />
-
+        {/* 8. Transit & How to Reach Hub */}
         <TransportationHub
           language={language}
           initialDepartureCity={departureCity}
@@ -307,6 +320,23 @@ export default function App() {
           language={language}
           onLanguageChange={setLanguage}
         />
+      )}
+
+      {/* Back To Top Floating Action Button */}
+      {showBackToTop && (
+        <button
+          onClick={scrollToTop}
+          className={`fixed left-3 sm:left-6 z-40 flex items-center justify-center gap-1.5 p-2.5 sm:px-4 sm:py-2.5 rounded-full bg-stone-900/90 hover:bg-stone-950 text-white shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 active:scale-95 border-2 border-amber-400/50 backdrop-blur-md cursor-pointer group ${
+            activeMonument ? 'bottom-28 sm:bottom-20' : 'bottom-5 sm:bottom-6'
+          }`}
+          aria-label="Back to top"
+          title={language === 'kn' ? 'ಪುಟದ ಮೇಲ್ಭಾಗಕ್ಕೆ ಹಿಂತಿರುಗಿ' : 'Back to top'}
+        >
+          <ArrowUp className="w-4 h-4 text-amber-400 group-hover:-translate-y-0.5 transition-transform" />
+          <span className="hidden sm:inline text-xs font-bold text-amber-200">
+            {language === 'kn' ? 'ಮೇಲಕ್ಕೆ' : 'Top'}
+          </span>
+        </button>
       )}
 
       {/* Floating AI Assistant Trigger Pill */}
