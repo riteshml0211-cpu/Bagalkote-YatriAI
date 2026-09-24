@@ -33,6 +33,7 @@ import {
 } from '../data/travelToolkitData';
 import { TRANSLATIONS } from '../data/translations';
 import { HeritageCertificateModal } from './HeritageCertificateModal';
+import { PocketGuideModal } from './PocketGuideModal';
 
 interface TravelerToolkitProps {
   language: Language;
@@ -62,6 +63,7 @@ export const TravelerToolkit: React.FC<TravelerToolkitProps> = ({
 
   const [offlineSaved, setOfflineSaved] = useState(false);
   const [showCertificate, setShowCertificate] = useState(false);
+  const [isPocketModalOpen, setIsPocketModalOpen] = useState(false);
 
   const t = TRANSLATIONS[language];
 
@@ -178,7 +180,7 @@ export const TravelerToolkit: React.FC<TravelerToolkitProps> = ({
   };
 
   const handlePrintPass = () => {
-    window.print();
+    setIsPocketModalOpen(true);
   };
 
   return (
@@ -720,6 +722,13 @@ export const TravelerToolkit: React.FC<TravelerToolkitProps> = ({
           totalPossibleStamps={HERITAGE_STAMPS.length}
         />
       )}
+
+      {/* Offline Printable Pocket Guide Modal */}
+      <PocketGuideModal
+        isOpen={isPocketModalOpen}
+        onClose={() => setIsPocketModalOpen(false)}
+        language={language}
+      />
     </section>
   );
 };

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Globe, Compass, Camera, Sparkles, MapPin, Volume2, PhoneCall, Menu, X, ShoppingBag, Utensils, Navigation, Award, Train } from 'lucide-react';
+import { Globe, Compass, Camera, Sparkles, MapPin, Volume2, PhoneCall, Menu, X, ShoppingBag, Utensils, Navigation, Award, Train, Download } from 'lucide-react';
 import { Language, Monument } from '../types';
 import { TRANSLATIONS } from '../data/translations';
-import { HeritageSoundscape } from './HeritageSoundscape';
 
 interface NavbarProps {
   language: Language;
@@ -13,6 +12,7 @@ interface NavbarProps {
   isPlayingAudio: boolean;
   onOpenAudioBar: () => void;
   onOpenChat: () => void;
+  onOpenPocketGuide?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -24,19 +24,19 @@ export const Navbar: React.FC<NavbarProps> = ({
   isPlayingAudio,
   onOpenAudioBar,
   onOpenChat,
+  onOpenPocketGuide,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const t = TRANSLATIONS[language];
 
   const navItems = [
-    { id: 'transportation', label: t.nav.transportation, icon: Train },
     { id: 'destinations', label: t.nav.destinations, icon: Compass },
     { id: 'circuit-map', label: t.nav.circuitMap, icon: MapPin },
-    { id: 'scanner', label: t.nav.scanner, icon: Camera },
     { id: 'planner', label: t.nav.planner, icon: Navigation },
     { id: 'weavers', label: t.nav.weavers, icon: ShoppingBag },
-    { id: 'cuisine', label: t.nav.cuisine, icon: Utensils },
+    { id: 'scanner', label: t.nav.scanner, icon: Camera },
     { id: 'traveler-toolkit', label: t.nav.toolkit, icon: Award },
+    { id: 'transportation', label: t.nav.transportation, icon: Train },
   ];
 
   const handleItemClick = (id: string) => {
@@ -137,10 +137,15 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
-            {/* Heritage Soundscape Ambient Audio */}
-            <div className="hidden min-[460px]:block">
-              <HeritageSoundscape language={language} />
-            </div>
+            {/* Offline Pocket Guide Button */}
+            <button
+              onClick={onOpenPocketGuide}
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-white hover:bg-amber-50 border border-amber-300 text-amber-950 font-semibold text-xs sm:text-sm transition-all shadow-xs cursor-pointer active:scale-95 shrink-0"
+              title="Download Offline Pocket Guide (Print / PDF)"
+            >
+              <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-700 shrink-0" />
+              <span className="hidden md:inline">{language === 'kn' ? 'ಪಾಕೆಟ್ ಗೈಡ್' : 'Pocket Guide'}</span>
+            </button>
 
             {/* Language Switcher Pill */}
             <button
@@ -229,15 +234,30 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             );
           })}
-          <div className="pt-2 border-t border-slate-100 mt-2 flex items-center justify-between px-1">
-            <HeritageSoundscape language={language} />
-            <a
-              href="tel:18004254254"
-              className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:text-amber-800"
+          <div className="pt-2 border-t border-slate-100 mt-2 space-y-1 px-1">
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenPocketGuide?.();
+              }}
+              className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-amber-900 bg-amber-50 rounded-lg"
             >
-              <PhoneCall className="w-3.5 h-3.5 text-amber-600" />
-              <span>{t.nav.helpline}</span>
-            </a>
+              <span className="flex items-center gap-2">
+                <Download className="w-3.5 h-3.5 text-amber-700" />
+                <span>{language === 'kn' ? 'ಆಫ್‌ಲೈನ್ ಪಾಕೆಟ್ ಗೈಡ್ (ಪ್ರಿಂಟ್/PDF)' : 'Offline Pocket Guide (Print/PDF)'}</span>
+              </span>
+              <span className="text-[10px] bg-amber-200/80 px-1.5 py-0.5 rounded text-amber-950 font-bold">PDF</span>
+            </button>
+
+            <div className="flex items-center justify-end pt-1">
+              <a
+                href="tel:18004254254"
+                className="flex items-center gap-2 px-3 py-1.5 text-xs text-slate-600 hover:text-amber-800"
+              >
+                <PhoneCall className="w-3.5 h-3.5 text-amber-600" />
+                <span>{t.nav.helpline}</span>
+              </a>
+            </div>
           </div>
         </div>
       )}

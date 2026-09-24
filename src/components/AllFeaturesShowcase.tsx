@@ -180,8 +180,8 @@ export const AllFeaturesShowcase: React.FC<AllFeaturesShowcaseProps> = ({
       id: 'audio-guide',
       title: isKn ? 'ದ್ವಿಭಾಷಾ ಆಡಿಯೋ ಗೈಡ್' : 'Bilingual Audio Story Tours',
       subtitle: isKn
-        ? 'ಇಂಗ್ಲಿಷ್ ಮತ್ತು ಕನ್ನಡದಲ್ಲಿ ಧ್ವನಿ ವಿವರಣೆ, ಅಗಸ್ತ್ಯ ತೀರ್ಥದ ನೈಸರ್ಗಿಕ ಶಬ್ದಗಳು ಮತ್ತು ಇತಿಹಾಸ ಕಥೆಗಳು'
-        : 'Rich historical narratives in English & Kannada with authentic Agastya Lake temple ambient soundscapes',
+        ? 'ಇಂಗ್ಲಿಷ್ ಮತ್ತು ಕನ್ನಡದಲ್ಲಿ ಐತಿಹಾಸಿಕ ಧ್ವನಿ ವಿವರಣೆ ಮತ್ತು ಗುಹಾ ದೇವಾಲಯಗಳ ಕಥೆಗಳು'
+        : 'Rich historical voice narratives in English & Kannada covering architecture, legends & history',
       icon: Volume2,
       badge: isKn ? 'ಧ್ವನಿ ಮಾರ್ಗದರ್ಶಿ' : 'Audio Guide',
       badgeColor: 'bg-amber-500/10 text-amber-800 border-amber-300',
@@ -207,7 +207,7 @@ export const AllFeaturesShowcase: React.FC<AllFeaturesShowcaseProps> = ({
   ];
 
   return (
-    <section className="relative z-20 py-8 sm:py-12 bg-linear-to-b from-[#FAF7F2] via-white to-[#FAF7F2] border-b border-amber-900/10">
+    <section id="all-features" className="relative z-20 py-8 sm:py-12 bg-linear-to-b from-[#FAF7F2] via-white to-[#FAF7F2] border-b border-amber-900/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">

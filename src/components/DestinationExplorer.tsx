@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Compass, Volume2, Clock, Ticket, MapPin, Award, ArrowRight, X, Sparkles, Check, Info } from 'lucide-react';
+import { Compass, Volume2, Clock, Ticket, MapPin, Award, ArrowRight, X, Sparkles, Check, Info, ExternalLink } from 'lucide-react';
 import { Language, Monument } from '../types';
 import { MONUMENTS } from '../data/heritageData';
 import { TRANSLATIONS } from '../data/translations';
+import { AgastyaSunsetTracker } from './AgastyaSunsetTracker';
+import { AsiTicketsModal } from './AsiTicketsModal';
 
 interface DestinationExplorerProps {
   language: Language;
@@ -21,6 +23,7 @@ export const DestinationExplorer: React.FC<DestinationExplorerProps> = ({
 }) => {
   const [selectedCluster, setSelectedCluster] = useState<string>('all');
   const [modalMonument, setModalMonument] = useState<Monument | null>(null);
+  const [isAsiModalOpen, setIsAsiModalOpen] = useState(false);
   const t = TRANSLATIONS[language];
 
   const hiddenGemsCount = MONUMENTS.filter((m) => m.isHiddenGem).length;
@@ -83,7 +86,20 @@ export const DestinationExplorer: React.FC<DestinationExplorerProps> = ({
             >
               {language === 'kn' ? 'ಗುಪ್ತ ತಾಣಗಳನ್ನು ವೀಕ್ಷಿಸಿ →' : 'View Offbeat Gems →'}
             </button>
+            <button
+              type="button"
+              onClick={() => setIsAsiModalOpen(true)}
+              className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-bold text-[11px] shadow-xs transition-all cursor-pointer ml-1"
+            >
+              <Ticket className="w-3.5 h-3.5 text-amber-200" />
+              <span>{language === 'kn' ? 'ASI ಇ-ಟಿಕೆಟ್ (₹೨೫)' : 'ASI E-Tickets (₹25 Online)'}</span>
+            </button>
           </div>
+        </div>
+
+        {/* Live Golden Hour & Agastya Lake Sunset Countdown Tracker */}
+        <div className="mb-8">
+          <AgastyaSunsetTracker language={language} />
         </div>
 
         {/* Cluster Filter Buttons */}
@@ -389,6 +405,13 @@ export const DestinationExplorer: React.FC<DestinationExplorerProps> = ({
             </div>
           </div>
         )}
+
+        {/* Official ASI E-Tickets Portal & Pricing Modal */}
+        <AsiTicketsModal
+          isOpen={isAsiModalOpen}
+          onClose={() => setIsAsiModalOpen(false)}
+          language={language}
+        />
       </div>
     </section>
   );

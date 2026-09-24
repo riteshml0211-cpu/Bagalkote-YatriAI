@@ -393,6 +393,84 @@ export const CircuitMapExplorer: React.FC<CircuitMapExplorerProps> = ({
           </p>
         </div>
 
+        {/* 1-Tap Google Maps Live GPS Route Launcher Banner */}
+        <div className="bg-gradient-to-r from-emerald-800 via-teal-900 to-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-white shadow-xl mb-8 border border-emerald-500/30">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1.5">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 text-xs font-bold border border-emerald-400/40">
+                <Navigation className="w-3.5 h-3.5" />
+                <span>{language === 'kn' ? 'ಲೈವ್ ಟ್ರಾಫಿಕ್ ಜಿಪಿಎಸ್ ಲಿಂಕ್' : 'Live Google Maps GPS Turn-by-Turn'}</span>
+              </div>
+              <h3 className="font-serif text-lg sm:text-xl font-bold text-white">
+                {language === 'kn'
+                  ? '೧-ಕ್ಲಿಕ್‌ನಲ್ಲಿ ಸಂಪೂರ್ಣ ಚಾಲುಕ್ಯ ಸರ್ಕ್ಯೂಟ್ ಮ್ಯಾಪ್ ತೆರೆಯಿರಿ'
+                  : '1-Tap Complete Chalukya Circuit GPS Navigation'}
+              </h3>
+              <p className="text-xs sm:text-sm text-emerald-100/80 max-w-2xl leading-relaxed">
+                {language === 'kn'
+                  ? 'ಬಾದಾಮಿ ಗುಹೆಗಳು → ಮಹಾಕೂಟ → ಪಟ್ಟದಕಲ್ಲು → ಐಹೊಳೆ → ಬನಶಂಕರಿ (ಒಟ್ಟು ೬೫ ಕಿ.ಮೀ.) ಲೈವ್ ಟ್ರಾಫಿಕ್‌ನೊಂದಿಗೆ ನಿಮ್ಮ ಗೂಗಲ್ ಮ್ಯಾಪ್ಸ್ ಆ್ಯಪ್‌ನಲ್ಲಿ ತಕ್ಷಣ ಆರಂಭವಾಗುತ್ತದೆ.'
+                  : 'Opens the complete scenic route (Badami → Mahakuta → Pattadakal → Aihole → Banashankari, ~65 km) in your Google Maps app with live traffic and turn-by-turn guidance.'}
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0">
+              <a
+                href="https://www.google.com/maps/dir/?api=1&origin=Badami+Cave+Temples,+Badami,+Karnataka&destination=Aihole+Durga+Temple,+Aihole,+Karnataka&waypoints=Mahakuta+Temples,+Karnataka%7CPattadakal+Monuments,+Karnataka%7CBanashankari+Amma+Temple,+Badami&travelmode=driving"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-emerald-950/40 transition-all active:scale-95 cursor-pointer"
+              >
+                <Navigation className="w-4 h-4 text-slate-950" />
+                <span>{language === 'kn' ? 'ಗೂಗಲ್ ಮ್ಯಾಪ್ಸ್‌ನಲ್ಲಿ ಆರಂಭಿಸಿ (೬೫ ಕಿ.ಮೀ.)' : 'Launch Full Route in Google Maps'}</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </div>
+
+          {/* Quick Route Leg Shortcuts */}
+          <div className="mt-4 pt-3 border-t border-emerald-700/50 flex items-center gap-2 overflow-x-auto no-scrollbar text-xs">
+            <span className="text-emerald-300 font-semibold shrink-0 text-[11px]">
+              {language === 'kn' ? 'ತ್ವರಿತ ಹಂತಗಳು:' : 'Quick Legs:'}
+            </span>
+            <a
+              href="https://www.google.com/maps/dir/?api=1&origin=Badami+Cave+Temples&destination=Pattadakal+Monuments&travelmode=driving"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium text-[11px] shrink-0 transition-colors flex items-center gap-1 border border-white/10"
+            >
+              <span>Badami → Pattadakal (22 km)</span>
+              <ExternalLink className="w-2.5 h-2.5 opacity-70" />
+            </a>
+            <a
+              href="https://www.google.com/maps/dir/?api=1&origin=Pattadakal+Monuments&destination=Aihole+Durga+Temple&travelmode=driving"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium text-[11px] shrink-0 transition-colors flex items-center gap-1 border border-white/10"
+            >
+              <span>Pattadakal → Aihole (14 km)</span>
+              <ExternalLink className="w-2.5 h-2.5 opacity-70" />
+            </a>
+            <a
+              href="https://www.google.com/maps/dir/?api=1&origin=Badami+Cave+Temples&destination=Mahakuta+Temples&travelmode=driving"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium text-[11px] shrink-0 transition-colors flex items-center gap-1 border border-white/10"
+            >
+              <span>Badami → Mahakuta (14 km)</span>
+              <ExternalLink className="w-2.5 h-2.5 opacity-70" />
+            </a>
+            <a
+              href="https://www.google.com/maps/dir/?api=1&origin=Badami+Bus+Stand&destination=Banashankari+Amma+Temple+Badami&travelmode=driving"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium text-[11px] shrink-0 transition-colors flex items-center gap-1 border border-white/10"
+            >
+              <span>Badami → Banashankari (5 km)</span>
+              <ExternalLink className="w-2.5 h-2.5 opacity-70" />
+            </a>
+          </div>
+        </div>
+
         {/* Top Grid: Interactive Vector Circuit Map + Active Node Info */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start mb-10">
           {/* Interactive Vector Map Canvas */}

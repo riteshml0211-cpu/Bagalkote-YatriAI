@@ -11,6 +11,7 @@ import { TripPlanner } from './components/TripPlanner';
 import { TravelerToolkit } from './components/TravelerToolkit';
 import { AudioGuidePlayer } from './components/AudioGuidePlayer';
 import { AIAssistantChat } from './components/AIAssistantChat';
+import { PocketGuideModal } from './components/PocketGuideModal';
 import { Footer } from './components/Footer';
 import { Language, Monument } from './types';
 import { MONUMENTS } from './data/heritageData';
@@ -23,6 +24,7 @@ export default function App() {
   const [activeMonument, setActiveMonument] = useState<Monument | null>(null);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isPocketGuideOpen, setIsPocketGuideOpen] = useState(false);
   const [chatInitialQuestion, setChatInitialQuestion] = useState<string | null>(null);
   const [weaversTab, setWeaversTab] = useState<'sarees' | 'cooperatives' | 'validator' | 'cuisine' | 'homestays'>('sarees');
   const [departureCity, setDepartureCity] = useState<string>('Bengaluru');
@@ -213,10 +215,11 @@ export default function App() {
         isPlayingAudio={isPlayingAudio}
         onOpenAudioBar={() => setIsPlayingAudio(!isPlayingAudio)}
         onOpenChat={() => setIsChatOpen(true)}
+        onOpenPocketGuide={() => setIsPocketGuideOpen(true)}
       />
 
       <main className={`flex-1 w-full overflow-x-hidden ${activeMonument ? 'pb-32 sm:pb-24' : ''}`}>
-        {/* Hero Banner Section with integrated departure search & all features quick rail */}
+        {/* 1. First Page / Hero Banner */}
         <HeroBanner
           language={language}
           onQuickAction={handleQuickAction}
@@ -224,24 +227,7 @@ export default function App() {
           onSelectDepartureCity={handleSelectDepartureCity}
         />
 
-        {/* All Features Showcase & Digital Services Hub */}
-        {/* Directly visible on the website so users see all features immediately when they enter */}
-        <AllFeaturesShowcase
-          language={language}
-          onNavigate={scrollToSection}
-          onSelectDepartureCity={handleSelectDepartureCity}
-          onOpenChat={() => setIsChatOpen(true)}
-          onPlayAudioGuide={() => handlePlayMonumentAudio(MONUMENTS[0])}
-        />
-
-        {/* Multi-Modal Transportation & Route Planner */}
-        {/* Placed prominently near the top so users can immediately plan how to reach Badami */}
-        <TransportationHub
-          language={language}
-          initialDepartureCity={departureCity}
-        />
-
-        {/* Interactive Destinations Explorer */}
+        {/* 2. Explore (Destination Explorer) */}
         <DestinationExplorer
           language={language}
           onPlayMonumentAudio={handlePlayMonumentAudio}
@@ -253,20 +239,23 @@ export default function App() {
           }}
         />
 
-        {/* Interactive Circuit Map & GPS Driving Routes */}
+        {/* 3. The Chalukya Heritage Circuit Map & GPS Driving Routes */}
         <CircuitMapExplorer
           language={language}
           onPlayMonumentAudio={handlePlayMonumentAudio}
         />
 
-        {/* AI Monument Visual Scanner Section */}
-        <MonumentScanner
+        {/* 4. Smart Expedition & Heritage Itinerary */}
+        <TripPlanner
           language={language}
-          onPlayAudioSnippet={handlePlayCustomSnippet}
-          onAskAiAboutMonument={handleAskAiAboutMonument}
+          onPlayMonumentAudio={handlePlayMonumentAudio}
+          onAskAi={(topic) => {
+            setChatInitialQuestion(topic);
+            setIsChatOpen(true);
+          }}
         />
 
-        {/* Weavers Hub & Inclusive Growth Section */}
+        {/* 5. The Weavers Hub & North Karnataka Heritage */}
         <WeaversHub
           language={language}
           activeTab={weaversTab}
@@ -277,20 +266,31 @@ export default function App() {
           }}
         />
 
-        {/* Smart Trip Planner */}
-        <TripPlanner
+        {/* 6. Visual Monument Scanner */}
+        <MonumentScanner
           language={language}
-          onPlayMonumentAudio={handlePlayMonumentAudio}
-          onAskAi={(topic) => {
-            setChatInitialQuestion(topic);
-            setIsChatOpen(true);
-          }}
+          onPlayAudioSnippet={handlePlayCustomSnippet}
+          onAskAiAboutMonument={handleAskAiAboutMonument}
         />
 
-        {/* Comprehensive Traveler Toolkit & Heritage Passport */}
+        {/* 7. Traveler Toolkit & Heritage Passport */}
         <TravelerToolkit
           language={language}
           onPlaySpeech={handlePlaySpeech}
+        />
+
+        {/* 8. Everything You Need For Your Chalukya Journey (All Features Showcase & Transportation Hub) */}
+        <AllFeaturesShowcase
+          language={language}
+          onNavigate={scrollToSection}
+          onSelectDepartureCity={handleSelectDepartureCity}
+          onOpenChat={() => setIsChatOpen(true)}
+          onPlayAudioGuide={() => handlePlayMonumentAudio(MONUMENTS[0])}
+        />
+
+        <TransportationHub
+          language={language}
+          initialDepartureCity={departureCity}
         />
       </main>
 
@@ -335,6 +335,13 @@ export default function App() {
         }}
         onPlaySpeech={handlePlaySpeech}
         initialQuestion={chatInitialQuestion}
+      />
+
+      {/* Offline Printable Pocket Guide Modal */}
+      <PocketGuideModal
+        isOpen={isPocketGuideOpen}
+        onClose={() => setIsPocketGuideOpen(false)}
+        language={language}
       />
 
       {/* Footer */}

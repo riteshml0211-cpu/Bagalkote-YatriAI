@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Sparkles, Phone, MapPin, Award, Heart, Utensils, Home, Star, ExternalLink, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { ShoppingBag, Sparkles, Phone, MapPin, Award, Heart, Utensils, Home, Star, ExternalLink, ShieldCheck, CheckCircle2, MessageCircle } from 'lucide-react';
 import { Language } from '../types';
 import { ARTISAN_COOPERATIVES, LOCAL_CUISINE, HOMESTAYS } from '../data/heritageData';
 import { TRANSLATIONS } from '../data/translations';
@@ -239,19 +239,43 @@ export const WeaversHub: React.FC<WeaversHubProps> = ({
                   </div>
                 </div>
 
-                <div className="p-6 pt-0 space-y-2">
+                <div className="p-6 pt-0 space-y-2.5">
                   <div className="text-[11px] text-slate-500 flex items-start gap-1">
                     <MapPin className="w-3.5 h-3.5 text-amber-700 mt-0.5 shrink-0" />
                     <span>{coop.address}</span>
                   </div>
 
-                  <a
-                    href={`tel:${coop.phone.split('/')[0].trim()}`}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-sm transition-all"
-                  >
-                    <Phone className="w-3.5 h-3.5" />
-                    <span>{t.weavers.coopCard.contact}</span>
-                  </a>
+                  {(() => {
+                    const cleanPhone = coop.phone.replace(/[^0-9]/g, '').slice(-10);
+                    const waMsg = language === 'kn'
+                      ? `ನಮಸ್ಕಾರ, ನಾನು ${coop.nameKn} ಗೆ ಭೇಟಿ ನೀಡಲು ಬಯಸುತ್ತೇನೆ. ಅಸಲಿ ಇಳಕಲ್ ಟೋಪೆತೇಂಚಿ ರೇಷ್ಮೆ ಸೀರೆಗಳ ಲಭ್ಯತೆ ಮತ್ತು ನೇಕಾರ ನೇಯ್ಗೆ ವೀಕ್ಷಣೆ ಬಗ್ಗೆ ತಿಳಿಸಿ.`
+                      : `Namaskara! I am planning to visit Badami and would like to inquire about authentic GI Tag Ilkal sarees & loom visits at ${coop.name}.`;
+                    const waUrl = `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(waMsg)}`;
+
+                    return (
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={`tel:${coop.phone.split('/')[0].trim()}`}
+                          className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 text-xs font-bold transition-all"
+                          title="Call Cooperative"
+                        >
+                          <Phone className="w-3.5 h-3.5 text-amber-700" />
+                          <span>{language === 'kn' ? 'ಕರೆ ಮಾಡಿ' : 'Call Society'}</span>
+                        </a>
+
+                        <a
+                          href={waUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
+                          title="Chat with Weaver Society on WhatsApp"
+                        >
+                          <MessageCircle className="w-3.5 h-3.5" />
+                          <span>WhatsApp</span>
+                        </a>
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             ))}

@@ -62,6 +62,12 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [swappingActivityId, setSwappingActivityId] = useState<string | null>(null);
+  const [selectedDayTab, setSelectedDayTab] = useState<number | 'all'>(1);
+  const [expandedTips, setExpandedTips] = useState<Record<string, boolean>>({});
+
+  const toggleTip = (id: string) => {
+    setExpandedTips((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   // Visited activities tracking with localStorage persistence
   const [visitedActivityIds, setVisitedActivityIds] = useState<string[]>(() => {
@@ -403,78 +409,73 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
   }, [duration, travelPartySize, travelStyle]);
 
   return (
-    <section id="planner" className="py-12 sm:py-20 bg-white">
+    <section id="planner" className="py-8 sm:py-12 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold mb-3 shadow-xs">
+        <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold mb-2 shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-amber-700" />
             <span>{t.planner.badge}</span>
           </div>
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
+          <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight">
             {language === 'kn' ? 'ಸ್ಮಾರ್ಟ್ ಯಾತ್ರೆ ಮತ್ತು ಎಕ್ಸ್‌ಪೆಡಿಷನ್ ಯೋಜಕ' : 'Smart Expedition & Heritage Itinerary'}
           </h2>
-          <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed">
+          <p className="mt-2 text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto leading-relaxed">
             {language === 'kn'
-              ? 'ನಿಮ್ಮ ಆಸಕ್ತಿಗೆ ತಕ್ಕಂತಹ ಯಾತ್ರಿಕ ಶೈಲಿಯನ್ನು ಆರಿಸಿ: ಪ್ರಾಚೀನ ಶಿಲಾಶಾಸನಗಳು, ಸುವರ್ಣ ಛಾಯಾಗ್ರಹಣ, ಇಳಕಲ್ ರೇಷ್ಮೆ ನೇಯ್ಗೆ, ಉತ್ತರ ಕರ್ನಾಟಕದ ರುಚಿ ಅಥವಾ ಕಣಿವೆ ಚಾರಣ.'
-              : 'Select your traveler persona or tailor minute-by-minute schedules with photo lighting azimuths, crowd meters, activity swappers, and dynamic budget calculators.'}
+              ? 'ಆಯ್ಕೆ ಮಾಡಿದ ಶೈಲಿಯ ಪ್ರಕಾರ ದಿನವಾರು ವೇಳಾಪಟ್ಟಿ, ಸ್ಮಾರಕ ಸಮಯ ಮತ್ತು ಊಟದ ವಿವರ.'
+              : 'Optimized day-by-day schedules with monument timings, direct routes, and authentic local meals.'}
           </p>
         </div>
 
-        {/* SECTION 1: Expedition Archetypes Selector */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-3.5">
+        {/* SECTION 1: Expedition Archetypes Selector (Compact Pills) */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2.5">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-amber-900 block">
                 {language === 'kn' ? 'ಹಂತ ೧: ಯಾತ್ರಿಕ ಶೈಲಿ ಆಯ್ಕೆ ಮಾಡಿ' : 'Step 1: Choose Your Expedition Persona'}
               </span>
-              <p className="text-xs text-slate-500">
-                {language === 'kn'
-                  ? 'ಯಾತ್ರಿಕ ಶೈಲಿಯನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ, ತಕ್ಷಣವೇ ಕ್ಯುರೇಟೆಡ್ ಪ್ರವಾಸ ತಯಾರಾಗುತ್ತದೆ'
-                  : 'Tap any archetype below to instantly tailor timings, photography windows, and secret stops'}
-              </p>
             </div>
             <button
               type="button"
               onClick={() => setShowAdvancedControls(!showAdvancedControls)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-50 hover:bg-amber-100/80 text-amber-900 border border-amber-200 transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 transition-all cursor-pointer"
             >
               <Sliders className="w-3.5 h-3.5" />
               <span>{showAdvancedControls ? (language === 'kn' ? 'ಸರಳ ನೋಟ' : 'Hide Customizer') : (language === 'kn' ? 'ದಿನ / ವೇಗ ಹೊಂದಿಸಿ' : 'Fine-tune Days & Pace')}</span>
             </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
             {EXPEDITION_ARCHETYPES.map((arch) => {
               const isSelected = selectedArchetypeId === arch.id;
               return (
                 <button
                   key={arch.id}
                   type="button"
-                  onClick={() => handleSelectArchetype(arch)}
-                  className={`text-left p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative group ${
+                  onClick={() => {
+                    handleSelectArchetype(arch);
+                    setSelectedDayTab(1);
+                  }}
+                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-2 relative ${
                     isSelected
-                      ? 'bg-amber-50/80 border-amber-600 shadow-md ring-2 ring-amber-500/20'
-                      : 'bg-white hover:bg-slate-50/80 border-slate-200 hover:border-amber-300 shadow-xs'
+                      ? 'bg-amber-50 border-amber-600 shadow-xs ring-1 ring-amber-500'
+                      : 'bg-white hover:bg-slate-50 border-slate-200'
                   }`}
                 >
-                  {isSelected && (
-                    <span className="absolute top-2.5 right-2.5 w-4 h-4 rounded-full bg-amber-600 text-white flex items-center justify-center text-[10px]">
-                      ✓
-                    </span>
-                  )}
-                  <div>
-                    <div className="text-2xl sm:text-3xl mb-1.5">{arch.icon}</div>
-                    <h4 className="font-serif font-bold text-xs sm:text-sm text-slate-900 leading-snug">
+                  <span className="text-xl shrink-0">{arch.icon}</span>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="font-serif font-bold text-xs text-slate-900 truncate">
                       {language === 'kn' ? arch.nameKn : arch.name}
                     </h4>
-                    <span className="inline-block mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-md bg-amber-100/70 text-amber-900">
+                    <span className="text-[10px] text-amber-800 font-medium block truncate">
                       {language === 'kn' ? arch.badgeKn : arch.badge}
                     </span>
                   </div>
-                  <p className="mt-2 text-[11px] text-slate-500 line-clamp-2 leading-tight">
-                    {language === 'kn' ? arch.taglineKn : arch.tagline}
-                  </p>
+                  {isSelected && (
+                    <span className="w-3.5 h-3.5 rounded-full bg-amber-600 text-white flex items-center justify-center text-[9px] shrink-0">
+                      ✓
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -483,8 +484,8 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
 
         {/* SECTION 2: Advanced Fine-tune Controls (Collapsible) */}
         {showAdvancedControls && (
-          <div className="bg-[#FAF7F2] border border-amber-200/80 rounded-2xl p-4 sm:p-6 shadow-xs mb-8 transition-all animate-fadeIn">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="bg-[#FAF7F2] border border-amber-200/80 rounded-2xl p-4 sm:p-5 shadow-xs mb-6 transition-all animate-fadeIn">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Duration */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
@@ -498,8 +499,9 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
                       onClick={() => {
                         setDuration(d);
                         generatePlan(d, selectedInterests, pace, selectedArchetypeId);
+                        setSelectedDayTab(1);
                       }}
-                      className={`text-center px-2 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                      className={`text-center px-2 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                         duration === d
                           ? 'bg-amber-600 text-white shadow-xs'
                           : 'bg-white hover:bg-amber-100/50 text-slate-700 border border-amber-200/70'
@@ -524,7 +526,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
                         key={opt.id}
                         type="button"
                         onClick={() => toggleInterest(opt.id)}
-                        className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                        className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                           isSelected
                             ? 'bg-amber-700 text-white font-semibold'
                             : 'bg-white text-slate-700 hover:bg-amber-50 border border-amber-200'
@@ -549,7 +551,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
                         key={p}
                         type="button"
                         onClick={() => setPace(p)}
-                        className={`py-1.5 px-1 rounded-lg text-xs font-semibold text-center transition-all cursor-pointer ${
+                        className={`py-1 px-1 rounded-lg text-xs font-semibold text-center transition-all cursor-pointer ${
                           pace === p
                             ? 'bg-amber-700 text-white'
                             : 'bg-white text-slate-700 hover:bg-amber-50 border border-amber-200'
@@ -561,12 +563,15 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
                   </div>
                 </div>
 
-                <div className="pt-3">
+                <div className="pt-2">
                   <button
                     type="button"
-                    onClick={() => generatePlan(duration, selectedInterests, pace, selectedArchetypeId)}
+                    onClick={() => {
+                      generatePlan(duration, selectedInterests, pace, selectedArchetypeId);
+                      setSelectedDayTab(1);
+                    }}
                     disabled={isGenerating}
-                    className="w-full py-2 px-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs transition-all cursor-pointer flex items-center justify-center gap-2"
+                    className="w-full py-1.5 px-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs transition-all cursor-pointer flex items-center justify-center gap-2"
                   >
                     <Sparkles className={`w-3.5 h-3.5 ${isGenerating ? 'animate-spin' : ''}`} />
                     <span>{isGenerating ? t.planner.generatingText : (language === 'kn' ? 'AI ಪ್ರವಾಸ ಮರುಹೊಂದಿಸಿ' : 'Recalculate AI Itinerary')}</span>
@@ -578,84 +583,75 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
         )}
 
         {/* SECTION 3: View Mode Tabs & Completion Status Bar */}
-        <div className="bg-[#FAF7F2] border border-amber-200/90 rounded-2xl sm:rounded-3xl p-3 sm:p-5 shadow-sm mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div className="bg-[#FAF7F2] border border-amber-200/90 rounded-2xl p-2.5 sm:p-3 shadow-xs mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             {/* View Selector Tabs */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0 scrollbar-none">
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
               <button
                 type="button"
                 onClick={() => setActiveTab('timeline')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 ${
                   activeTab === 'timeline'
                     ? 'bg-amber-600 text-white shadow-xs'
                     : 'bg-white text-slate-700 hover:bg-amber-100/50 border border-amber-200'
                 }`}
               >
                 <Calendar className="w-3.5 h-3.5" />
-                <span>{language === 'kn' ? '೧. ಯಾತ್ರಾ ಕಾಲರೇಖೆ' : '1. Expedition Timeline'}</span>
+                <span>{language === 'kn' ? '೧. ಕಾಲರೇಖೆ' : '1. Timeline'}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveTab('matrix')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 ${
                   activeTab === 'matrix'
                     ? 'bg-amber-600 text-white shadow-xs'
                     : 'bg-white text-slate-700 hover:bg-amber-100/50 border border-amber-200'
                 }`}
               >
                 <Compass className="w-3.5 h-3.5" />
-                <span>{language === 'kn' ? '೨. ಮಾರ್ಗ ಮತ್ತು ದೂರ ಕೋಷ್ಟಕ' : '2. Route & Distance Matrix'}</span>
+                <span>{language === 'kn' ? '೨. ಮಾರ್ಗ & ದೂರ' : '2. Route Matrix'}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveTab('calculator')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 ${
                   activeTab === 'calculator'
                     ? 'bg-amber-600 text-white shadow-xs'
                     : 'bg-white text-slate-700 hover:bg-amber-100/50 border border-amber-200'
                 }`}
               >
                 <Calculator className="w-3.5 h-3.5" />
-                <span>{language === 'kn' ? '೩. ಬಜೆಟ್ ಮತ್ತು ಸಾರಿಗೆ ಲೆಕ್ಕಾಚಾರ' : '3. Live Trip Budget'}</span>
+                <span>{language === 'kn' ? '೩. ಬಜೆಟ್' : '3. Budget'}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveTab('essentials')}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 ${
                   activeTab === 'essentials'
                     ? 'bg-amber-600 text-white shadow-xs'
                     : 'bg-white text-slate-700 hover:bg-amber-100/50 border border-amber-200'
                 }`}
               >
                 <Luggage className="w-3.5 h-3.5" />
-                <span>{language === 'kn' ? '೪. ಬ್ಯಾಕ್‌ಪ್ಯಾಕ್ ಪರಿಶೀಲನಾ ಪಟ್ಟಿ' : '4. Field Essentials'}</span>
+                <span>{language === 'kn' ? '೪. ಬ್ಯಾಕ್‌ಪ್ಯಾಕ್' : '4. Essentials'}</span>
               </button>
             </div>
 
             {/* Expedition Progress Counter */}
-            <div className="flex items-center justify-between sm:justify-end gap-3 bg-white px-3.5 py-1.5 rounded-xl border border-amber-200">
-              <div className="text-right">
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold block">
-                  {language === 'kn' ? 'ಯಾತ್ರೆಯ ಪ್ರಗತಿ' : 'Expedition Completed'}
-                </span>
-                <span className="text-xs font-bold text-slate-800">
-                  {completedActivitiesCount} / {totalActivitiesCount} {language === 'kn' ? 'ತಾಣಗಳು' : 'stops'} ({completionPercent}%)
-                </span>
-              </div>
-              <div className="w-20 bg-slate-100 h-2 rounded-full overflow-hidden">
+            <div className="flex items-center justify-between sm:justify-end gap-2.5 bg-white px-3 py-1 rounded-xl border border-amber-200 text-xs">
+              <span className="text-[11px] text-slate-600 font-medium">
+                {language === 'kn' ? 'ಪ್ರಗತಿ:' : 'Progress:'} <strong>{completedActivitiesCount}/{totalActivitiesCount}</strong>
+              </span>
+              <div className="w-16 bg-slate-100 h-1.5 rounded-full overflow-hidden">
                 <div
                   className="bg-emerald-500 h-full transition-all duration-500"
                   style={{ width: `${completionPercent}%` }}
                 />
               </div>
-              {completionPercent === 100 && (
-                <span className="text-sm" title="All stops visited!">
-                  🏆
-                </span>
-              )}
+              <span className="text-[11px] font-bold text-slate-800">{completionPercent}%</span>
             </div>
           </div>
         </div>
@@ -664,316 +660,352 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
 
         {/* TAB 1: EXPEDITION TIMELINE */}
         {activeTab === 'timeline' && (
-          <div className="space-y-6">
-            {/* Itinerary Header & Action Toolbar */}
-            <div className="bg-[#FAF7F2]/60 border border-amber-200/80 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="space-y-4">
+            {/* Itinerary Header & Action Toolbar (Compact) */}
+            <div className="bg-[#FAF7F2]/80 border border-amber-200/80 rounded-2xl p-3.5 sm:p-4 shadow-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
-                <div className="flex items-center gap-2 text-xs text-amber-800 font-bold mb-1">
+                <div className="flex items-center gap-2 text-xs text-amber-800 font-bold mb-0.5">
                   <Navigation className="w-3.5 h-3.5 shrink-0" />
                   <span>
-                    {t.planner.totalDistance}: ~{itinerary.totalDistanceKm} km • {itinerary.recommendedTransport}
+                    ~{itinerary.totalDistanceKm} km • {itinerary.recommendedTransport}
                   </span>
                 </div>
-                <h3 className="font-serif text-xl sm:text-2xl font-bold text-slate-900">
+                <h3 className="font-serif text-lg sm:text-xl font-bold text-slate-900">
                   {language === 'kn' ? itinerary.titleKn || itinerary.title : itinerary.title}
                 </h3>
-                <p className="mt-1 text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed">
+                <p className="text-xs text-slate-600 line-clamp-2 mt-0.5">
                   {language === 'kn' ? itinerary.summaryKn || itinerary.summary : itinerary.summary}
                 </p>
               </div>
 
               {/* Action Buttons: WhatsApp, Copy, Print */}
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center gap-1.5 shrink-0">
                 <button
                   type="button"
                   onClick={handleShareWhatsApp}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
                   title="Share on WhatsApp"
                 >
-                  <Share2 className="w-3.5 h-3.5" />
-                  <span>{language === 'kn' ? 'ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಹಂಚಿಕೊಳ್ಳಿ' : 'WhatsApp Plan'}</span>
+                  <Share2 className="w-3 h-3" />
+                  <span>WhatsApp</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleCopyItinerary}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-300 transition-all cursor-pointer shadow-xs"
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-300 transition-all cursor-pointer shadow-xs"
                 >
-                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
                   <span>{copied ? t.planner.copiedText : t.planner.copyBtn}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handlePrint}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-300 transition-all cursor-pointer shadow-xs"
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-300 transition-all cursor-pointer shadow-xs"
                 >
-                  <Printer className="w-3.5 h-3.5" />
+                  <Printer className="w-3 h-3" />
                   <span>{t.planner.printBtn}</span>
                 </button>
               </div>
             </div>
 
-            {/* Days Loop */}
-            <div className="space-y-8">
-              {itinerary.days.map((day, dayIndex) => (
-                <div key={day.dayNumber} className="bg-white border border-amber-200/90 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-sm space-y-6">
-                  {/* Day Header Banner */}
-                  <div className="flex items-center justify-between border-b border-amber-100 pb-4">
-                    <div className="flex items-center gap-3">
-                      <span className="w-8 h-8 rounded-xl bg-amber-600 text-white font-serif font-bold text-sm flex items-center justify-center shadow-xs shrink-0">
-                        {day.dayNumber}
-                      </span>
-                      <div>
-                        <span className="text-[11px] font-bold text-amber-800 uppercase tracking-wider block">
-                          {language === 'kn' ? `ದಿನ ${day.dayNumber} ರ ಪ್ರವಾಸ` : `Day ${day.dayNumber} Program`}
+            {/* DAY SWITCHER TABS - Eliminates endless scrolling */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mr-1 shrink-0">
+                {language === 'kn' ? 'ದಿನ:' : 'Day:'}
+              </span>
+              {itinerary.days.map((day) => (
+                <button
+                  key={day.dayNumber}
+                  type="button"
+                  onClick={() => setSelectedDayTab(day.dayNumber)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                    selectedDayTab === day.dayNumber
+                      ? 'bg-amber-600 text-white shadow-xs'
+                      : 'bg-white hover:bg-amber-50 text-slate-700 border border-slate-200'
+                  }`}
+                >
+                  <span className="w-4 h-4 rounded-full bg-amber-200/40 text-[10px] flex items-center justify-center">
+                    {day.dayNumber}
+                  </span>
+                  <span>{language === 'kn' ? `ದಿನ ${day.dayNumber}` : `Day ${day.dayNumber}`}</span>
+                  <span className="hidden md:inline text-[11px] opacity-80 max-w-[120px] truncate">
+                    ({language === 'kn' ? day.themeKn || day.theme : day.theme})
+                  </span>
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => setSelectedDayTab(selectedDayTab === 'all' ? 1 : 'all')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0 border ${
+                  selectedDayTab === 'all'
+                    ? 'bg-slate-800 text-white border-slate-800 shadow-xs'
+                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                {selectedDayTab === 'all'
+                  ? (language === 'kn' ? '೧ ದಿನದ ನೋಟ' : 'Single Day')
+                  : (language === 'kn' ? 'ಎಲ್ಲಾ ದಿನಗಳು' : 'View All Days')}
+              </button>
+            </div>
+
+            {/* Days Display (Filtered to active day or all) */}
+            <div className="space-y-4">
+              {itinerary.days
+                .filter((d) => selectedDayTab === 'all' || d.dayNumber === selectedDayTab)
+                .map((day, dayIndex) => (
+                  <div key={day.dayNumber} className="bg-white border border-amber-200/90 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+                    {/* Day Header Banner */}
+                    <div className="flex items-center justify-between border-b border-amber-100 pb-2.5">
+                      <div className="flex items-center gap-2.5">
+                        <span className="w-7 h-7 rounded-lg bg-amber-600 text-white font-serif font-bold text-xs flex items-center justify-center shadow-xs shrink-0">
+                          {day.dayNumber}
                         </span>
-                        <h4 className="font-serif font-bold text-base sm:text-xl text-slate-900">
-                          {language === 'kn' ? day.themeKn || day.theme : day.theme}
-                        </h4>
+                        <div>
+                          <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider block">
+                            {language === 'kn' ? `ದಿನ ${day.dayNumber} ರ ಪ್ರವಾಸ` : `Day ${day.dayNumber} Program`}
+                          </span>
+                          <h4 className="font-serif font-bold text-sm sm:text-base text-slate-900">
+                            {language === 'kn' ? day.themeKn || day.theme : day.theme}
+                          </h4>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Activities Timeline Cards */}
-                  <div className="pl-2 sm:pl-4 space-y-5">
-                    {day.activities.map((activity, actIdx) => {
-                      const isVisited = activity.id ? visitedActivityIds.includes(activity.id) : false;
-                      const hasAudio = !!activity.monumentId;
-                      const isSwapping = swappingActivityId === activity.id;
+                    {/* Activities Timeline Cards (Compact with Collapsible Tips) */}
+                    <div className="pl-1 sm:pl-3 space-y-3">
+                      {day.activities.map((activity, actIdx) => {
+                        const isVisited = activity.id ? visitedActivityIds.includes(activity.id) : false;
+                        const hasAudio = !!activity.monumentId;
+                        const isSwapping = swappingActivityId === activity.id;
+                        const isTipOpen = activity.id ? !!expandedTips[activity.id] : false;
 
-                      return (
-                        <div
-                          key={activity.id || actIdx}
-                          className={`relative pl-4 sm:pl-6 border-l-2 transition-all ${
-                            isVisited ? 'border-emerald-500 bg-emerald-50/20' : 'border-amber-300'
-                          } py-1`}
-                        >
-                          {/* Bullet marker */}
-                          <button
-                            type="button"
-                            onClick={() => activity.id && toggleVisitedActivity(activity.id)}
-                            title={isVisited ? 'Mark as not visited' : 'Mark as visited'}
-                            className={`absolute -left-[11px] sm:-left-[13px] top-2 w-5 h-5 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-                              isVisited
-                                ? 'bg-emerald-600 text-white shadow-xs'
-                                : 'bg-white border-2 border-amber-500 hover:border-amber-700 text-transparent'
-                            }`}
+                        return (
+                          <div
+                            key={activity.id || actIdx}
+                            className={`relative pl-4 sm:pl-5 border-l-2 transition-all ${
+                              isVisited ? 'border-emerald-500 bg-emerald-50/20' : 'border-amber-300'
+                            } py-1`}
                           >
-                            <Check className="w-3 h-3" />
-                          </button>
+                            {/* Bullet marker */}
+                            <button
+                              type="button"
+                              onClick={() => activity.id && toggleVisitedActivity(activity.id)}
+                              title={isVisited ? 'Mark as not visited' : 'Mark as visited'}
+                              className={`absolute -left-[10px] sm:-left-[11px] top-1.5 w-4.5 h-4.5 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                                isVisited
+                                  ? 'bg-emerald-600 text-white shadow-xs'
+                                  : 'bg-white border-2 border-amber-500 hover:border-amber-700 text-transparent'
+                              }`}
+                            >
+                              <Check className="w-2.5 h-2.5" />
+                            </button>
 
-                          {/* Card Content */}
-                          <div className="space-y-2">
-                            {/* Top row: Time, badges & Quick actions */}
-                            <div className="flex flex-wrap items-center justify-between gap-2">
-                              <div className="flex flex-wrap items-center gap-1.5">
-                                <span className="text-xs font-bold text-amber-900 bg-amber-100/80 px-2.5 py-0.5 rounded-lg border border-amber-300/60 flex items-center gap-1 shrink-0">
-                                  <Clock className="w-3 h-3 text-amber-700" />
-                                  {activity.time}
-                                </span>
-
-                                <span className="text-[11px] text-slate-500 font-medium flex items-center gap-1 shrink-0">
-                                  <MapPin className="w-3 h-3 text-slate-400" />
-                                  {activity.location}
-                                </span>
-
-                                {activity.crowdLevel && (
-                                  <span
-                                    className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${
-                                      activity.crowdLevel === 'Low & Serene'
-                                        ? 'bg-emerald-100 text-emerald-800'
-                                        : activity.crowdLevel === 'Golden Hour Peak'
-                                        ? 'bg-orange-100 text-orange-900'
-                                        : 'bg-slate-100 text-slate-700'
-                                    }`}
-                                  >
-                                    {activity.crowdLevel}
+                            {/* Card Content */}
+                            <div className="space-y-1.5">
+                              {/* Top row: Time, badges & Quick actions */}
+                              <div className="flex flex-wrap items-center justify-between gap-1.5">
+                                <div className="flex flex-wrap items-center gap-1.5">
+                                  <span className="text-[11px] font-bold text-amber-900 bg-amber-100/80 px-2 py-0.5 rounded-md border border-amber-300/60 flex items-center gap-1 shrink-0">
+                                    <Clock className="w-3 h-3 text-amber-700" />
+                                    {activity.time}
                                   </span>
-                                )}
 
-                                {activity.difficulty && (
-                                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
-                                    {activity.difficulty}
+                                  <span className="text-[11px] text-slate-500 font-medium flex items-center gap-1 shrink-0">
+                                    <MapPin className="w-3 h-3 text-slate-400" />
+                                    {activity.location}
                                   </span>
-                                )}
 
-                                {activity.durationMins && (
-                                  <span className="text-[10px] text-slate-400">
-                                    (~{activity.durationMins}m)
-                                  </span>
-                                )}
-                              </div>
-
-                              {/* Interactive Action Badges */}
-                              <div className="flex items-center gap-1.5">
-                                {hasAudio && onPlayMonumentAudio && (
-                                  <button
-                                    type="button"
-                                    onClick={() => handlePlayAudio(activity.monumentId)}
-                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-100/80 hover:bg-amber-200 text-amber-950 border border-amber-300 transition-all cursor-pointer"
-                                    title="Play Monument Audio Guide"
-                                  >
-                                    <Headphones className="w-3 h-3 text-amber-800" />
-                                    <span>{language === 'kn' ? 'ಆಡಿಯೋ' : 'Audio'}</span>
-                                  </button>
-                                )}
-
-                                {onAskAi && (
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      handleAskAboutActivity(
-                                        language === 'kn' ? activity.titleKn || activity.title : activity.title,
-                                        activity.location
-                                      )
-                                    }
-                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 transition-all cursor-pointer"
-                                    title="Ask AI Assistant about this spot"
-                                  >
-                                    <MessageSquare className="w-3 h-3 text-slate-600" />
-                                    <span>{language === 'kn' ? 'AI ಕೇಳಿ' : 'Ask AI'}</span>
-                                  </button>
-                                )}
-
-                                {activity.alternativeOptions && activity.alternativeOptions.length > 0 && (
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      setSwappingActivityId(isSwapping ? null : activity.id || null)
-                                    }
-                                    className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-amber-800 hover:bg-amber-50 border border-amber-200 transition-all cursor-pointer"
-                                    title="Explore alternative options for this time slot"
-                                  >
-                                    <Repeat className="w-3 h-3" />
-                                    <span>{language === 'kn' ? 'ಬದಲಾಯಿಸಿ' : 'Swap'}</span>
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Title & Description */}
-                            <h5 className="font-serif font-bold text-sm sm:text-base text-slate-900 flex items-center gap-2">
-                              <span>{language === 'kn' ? activity.titleKn || activity.title : activity.title}</span>
-                              {isVisited && (
-                                <span className="text-xs font-normal text-emerald-700 flex items-center gap-1">
-                                  <CheckCircle2 className="w-3.5 h-3.5" />
-                                  <span>{language === 'kn' ? 'ಭೇಟಿ ನೀಡಲಾಗಿದೆ' : 'Visited'}</span>
-                                </span>
-                              )}
-                            </h5>
-
-                            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                              {language === 'kn' ? activity.descriptionKn || activity.description : activity.description}
-                            </p>
-
-                            {/* Photography Tip Window */}
-                            {activity.photoSpotTip && (
-                              <div className="flex items-start gap-1.5 text-[11px] text-amber-950 font-medium bg-amber-50/70 p-2 rounded-lg border border-amber-200/60">
-                                <Camera className="w-3.5 h-3.5 text-amber-700 mt-0.5 shrink-0" />
-                                <span>
-                                  <strong>{language === 'kn' ? 'ಫೋಟೋ ಬೆಳಕಿನ ಕಿಟಕಿ: ' : 'Light & Photo Cue: '}</strong>
-                                  {activity.photoSpotTip}
-                                </span>
-                              </div>
-                            )}
-
-                            {/* Insider Tip */}
-                            {activity.insiderTip && (
-                              <p className="text-[11px] text-slate-700 italic">
-                                💡 <strong>{language === 'kn' ? 'ಸ್ಥಳೀಯ ಸುಳಿವು: ' : 'Insider Advice: '}</strong>
-                                {activity.insiderTip}
-                              </p>
-                            )}
-
-                            {/* Alternative Options Drawer (When user clicks Swap) */}
-                            {isSwapping && activity.alternativeOptions && (
-                              <div className="mt-3 p-3.5 rounded-xl bg-amber-50/90 border border-amber-300 space-y-2 animate-fadeIn">
-                                <div className="flex items-center justify-between">
-                                  <span className="text-xs font-bold text-amber-950 flex items-center gap-1.5">
-                                    <Sparkles className="w-3.5 h-3.5 text-amber-700" />
-                                    <span>{language === 'kn' ? 'ಈ ಸಮಯಕ್ಕೆ ಪರ್ಯಾಯ ಗುಪ್ತ ತಾಣಗಳು:' : 'Secret Gem Alternatives for this slot:'}</span>
-                                  </span>
-                                  <button
-                                    type="button"
-                                    onClick={() => setSwappingActivityId(null)}
-                                    className="text-xs text-slate-500 hover:text-slate-800"
-                                  >
-                                    ✕
-                                  </button>
+                                  {activity.durationMins && (
+                                    <span className="text-[10px] text-slate-400">
+                                      (~{activity.durationMins}m)
+                                    </span>
+                                  )}
                                 </div>
-                                <div className="space-y-2">
-                                  {activity.alternativeOptions.map((alt) => (
-                                    <div
-                                      key={alt.id}
-                                      className="bg-white p-3 rounded-xl border border-amber-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+
+                                {/* Interactive Action Badges */}
+                                <div className="flex items-center gap-1">
+                                  {hasAudio && onPlayMonumentAudio && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handlePlayAudio(activity.monumentId)}
+                                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300 transition-all cursor-pointer"
+                                      title="Play Monument Audio Guide"
                                     >
-                                      <div>
-                                        <h6 className="font-serif font-bold text-xs text-slate-900">
-                                          {language === 'kn' ? alt.titleKn : alt.title}
-                                        </h6>
-                                        <p className="text-[11px] text-slate-600 mt-0.5">
-                                          {language === 'kn' ? alt.descriptionKn : alt.description}
-                                        </p>
-                                        <span className="text-[10px] text-slate-400 block mt-0.5">
-                                          📍 {alt.location}
-                                        </span>
-                                      </div>
-                                      <button
-                                        type="button"
-                                        onClick={() =>
-                                          activity.id && handleSwapActivity(dayIndex, activity.id, alt)
-                                        }
-                                        className="self-start sm:self-center px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shrink-0 transition-all cursor-pointer shadow-xs"
-                                      >
-                                        {language === 'kn' ? 'ಯೋಜನೆಗೆ ಸೇರಿಸಿ' : 'Swap into Plan'}
-                                      </button>
-                                    </div>
-                                  ))}
+                                      <Headphones className="w-3 h-3 text-amber-800" />
+                                      <span>{language === 'kn' ? 'ಆಡಿಯೋ' : 'Audio'}</span>
+                                    </button>
+                                  )}
+
+                                  {onAskAi && (
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        handleAskAboutActivity(
+                                          language === 'kn' ? activity.titleKn || activity.title : activity.title,
+                                          activity.location
+                                        )
+                                      }
+                                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 transition-all cursor-pointer"
+                                      title="Ask AI Assistant about this spot"
+                                    >
+                                      <MessageSquare className="w-3 h-3 text-slate-600" />
+                                      <span>{language === 'kn' ? 'AI ಕೇಳಿ' : 'Ask AI'}</span>
+                                    </button>
+                                  )}
+
+                                  {activity.alternativeOptions && activity.alternativeOptions.length > 0 && (
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        setSwappingActivityId(isSwapping ? null : activity.id || null)
+                                      }
+                                      className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[11px] font-medium text-amber-800 hover:bg-amber-50 border border-amber-200 transition-all cursor-pointer"
+                                      title="Explore alternatives"
+                                    >
+                                      <Repeat className="w-3 h-3" />
+                                      <span>{language === 'kn' ? 'ಬದಲಿಸಿ' : 'Swap'}</span>
+                                    </button>
+                                  )}
+
+                                  {/* Expandable Tips Toggle */}
+                                  {(activity.photoSpotTip || activity.insiderTip) && (
+                                    <button
+                                      type="button"
+                                      onClick={() => activity.id && toggleTip(activity.id)}
+                                      className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[11px] font-semibold text-amber-800 hover:bg-amber-100 border border-amber-200 bg-amber-50/60 transition-all cursor-pointer"
+                                    >
+                                      <span>💡 {language === 'kn' ? 'ಸಲಹೆ' : 'Tips'}</span>
+                                      <ChevronDown className={`w-3 h-3 transition-transform ${isTipOpen ? 'rotate-180' : ''}`} />
+                                    </button>
+                                  )}
                                 </div>
                               </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
 
-                    {/* Recommended Meal for the Day */}
-                    {day.recommendedMeal && (
-                      <div className="pl-4 sm:pl-6 pt-3">
-                        <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200 flex items-start gap-3">
-                          <Utensils className="w-4 h-4 text-amber-700 mt-0.5 shrink-0" />
-                          <div className="text-xs">
-                            <span className="font-bold text-amber-950 block">
-                              {language === 'kn' ? 'ಶಿಫಾರಸು ಮಾಡಿದ ಸಾಂಪ್ರದಾಯಿಕ ಊಟ:' : 'Curated Local Meal Stop:'}
-                            </span>
-                            <span className="font-semibold text-slate-800">
-                              {language === 'kn' ? day.recommendedMeal.dishKn || day.recommendedMeal.dish : day.recommendedMeal.dish}
-                            </span>
-                            <span className="text-slate-500 block text-[11px] mt-0.5">
+                              {/* Title & Visited Tag */}
+                              <h5 className="font-serif font-bold text-sm sm:text-base text-slate-900 flex items-center gap-2">
+                                <span>{language === 'kn' ? activity.titleKn || activity.title : activity.title}</span>
+                                {isVisited && (
+                                  <span className="text-[11px] font-normal text-emerald-700 flex items-center gap-1">
+                                    <CheckCircle2 className="w-3 h-3" />
+                                    <span>{language === 'kn' ? 'ಭೇಟಿ ನೀಡಲಾಗಿದೆ' : 'Visited'}</span>
+                                  </span>
+                                )}
+                              </h5>
+
+                              {/* Crisp Concise Description (No endless wall of text) */}
+                              <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">
+                                {language === 'kn' ? activity.descriptionKn || activity.description : activity.description}
+                              </p>
+
+                              {/* Expandable Tips Drawer (Only when user toggles) */}
+                              {isTipOpen && (
+                                <div className="space-y-1.5 pt-1 text-[11px] animate-in fade-in duration-200">
+                                  {activity.photoSpotTip && (
+                                    <div className="flex items-start gap-1.5 text-amber-950 font-medium bg-amber-50/80 p-2 rounded-lg border border-amber-200/60">
+                                      <Camera className="w-3.5 h-3.5 text-amber-700 mt-0.5 shrink-0" />
+                                      <span>
+                                        <strong>{language === 'kn' ? 'ಫೋಟೋ ಬೆಳಕು: ' : 'Photo Cue: '}</strong>
+                                        {activity.photoSpotTip}
+                                      </span>
+                                    </div>
+                                  )}
+                                  {activity.insiderTip && (
+                                    <div className="flex items-start gap-1.5 text-slate-700 bg-slate-50 p-2 rounded-lg border border-slate-200">
+                                      <Info className="w-3.5 h-3.5 text-slate-500 mt-0.5 shrink-0" />
+                                      <span>
+                                        <strong>{language === 'kn' ? 'ಸಲಹೆ: ' : 'Advice: '}</strong>
+                                        {activity.insiderTip}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* Alternative Options Drawer (When user clicks Swap) */}
+                              {isSwapping && activity.alternativeOptions && (
+                                <div className="mt-2 p-3 rounded-xl bg-amber-50/90 border border-amber-300 space-y-2 animate-fadeIn">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs font-bold text-amber-950 flex items-center gap-1">
+                                      <Sparkles className="w-3 h-3 text-amber-700" />
+                                      <span>{language === 'kn' ? 'ಪರ್ಯಾಯ ತಾಣಗಳು:' : 'Secret Gem Alternatives:'}</span>
+                                    </span>
+                                    <button
+                                      type="button"
+                                      onClick={() => setSwappingActivityId(null)}
+                                      className="text-xs text-slate-500 hover:text-slate-800"
+                                    >
+                                      ✕
+                                    </button>
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    {activity.alternativeOptions.map((alt) => (
+                                      <div
+                                        key={alt.id}
+                                        className="bg-white p-2.5 rounded-lg border border-amber-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 text-xs"
+                                      >
+                                        <div>
+                                          <h6 className="font-serif font-bold text-xs text-slate-900">
+                                            {language === 'kn' ? alt.titleKn : alt.title}
+                                          </h6>
+                                          <span className="text-[10px] text-slate-400 block">
+                                            📍 {alt.location}
+                                          </span>
+                                        </div>
+                                        <button
+                                          type="button"
+                                          onClick={() =>
+                                            activity.id && handleSwapActivity(dayIndex, activity.id, alt)
+                                          }
+                                          className="self-start sm:self-center px-2.5 py-1 rounded-md bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-bold shrink-0 transition-all cursor-pointer shadow-xs"
+                                        >
+                                          {language === 'kn' ? 'ಸೇರಿಸಿ' : 'Swap In'}
+                                        </button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                      {/* Recommended Meal for the Day (Compact) */}
+                      {day.recommendedMeal && (
+                        <div className="pl-4 sm:pl-5 pt-1">
+                          <div className="py-2 px-3 rounded-xl bg-amber-50/80 border border-amber-200 flex items-center justify-between gap-2 text-xs">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <Utensils className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+                              <span className="font-semibold text-slate-900 truncate">
+                                {language === 'kn' ? 'ಶಿಫಾರಸು ಊಟ: ' : 'Meal Stop: '}
+                                {language === 'kn' ? day.recommendedMeal.dishKn || day.recommendedMeal.dish : day.recommendedMeal.dish}
+                              </span>
+                            </div>
+                            <span className="text-[11px] text-slate-500 shrink-0 truncate">
                               @{day.recommendedMeal.place}
                             </span>
                           </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
 
-            {/* Pro Tips Section */}
+            {/* Pro Tips Section (Compact) */}
             {itinerary.proTips && itinerary.proTips.length > 0 && (
-              <div className="bg-[#FAF7F2] border border-amber-200/80 rounded-2xl p-5 sm:p-6 shadow-xs">
-                <h4 className="font-serif font-bold text-sm text-slate-900 mb-3 flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-amber-700" />
+              <div className="bg-[#FAF7F2] border border-amber-200/80 rounded-xl p-3.5 sm:p-4 shadow-xs">
+                <h4 className="font-serif font-bold text-xs text-slate-900 mb-2 flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
                   <span>{t.planner.proTipsTitle}</span>
                 </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
                   {itinerary.proTips.map((tip, i) => (
                     <div
                       key={i}
-                      className="p-3 rounded-xl bg-white border border-amber-200/60 text-xs text-slate-700 leading-relaxed shadow-xs"
+                      className="p-2.5 rounded-lg bg-white border border-amber-200/60 text-[11px] text-slate-700 leading-snug shadow-xs"
                     >
                       {tip}
                     </div>

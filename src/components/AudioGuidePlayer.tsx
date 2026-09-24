@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, X, Globe, ChevronUp, ChevronDown, Loader2 } from 'lucide-react';
+import { Play, Pause, X, Globe, ChevronUp, ChevronDown, Loader2, RotateCcw, RotateCw } from 'lucide-react';
 import { Monument, Language } from '../types';
 import { TRANSLATIONS } from '../data/translations';
 
@@ -186,9 +186,23 @@ export const AudioGuidePlayer: React.FC<AudioGuidePlayerProps> = ({
     language === 'kn' ? monument.audioSnippetKn : monument.audioSnippetEn;
 
   const toggleSpeed = () => {
-    const speeds = [0.8, 1.0, 1.25];
+    const speeds = [0.75, 1.0, 1.25, 1.5];
     const nextIndex = (speeds.indexOf(playbackSpeed) + 1) % speeds.length;
-    setPlaybackSpeed(speeds[nextIndex]);
+    const newSpeed = speeds[nextIndex];
+    setPlaybackSpeed(newSpeed);
+    if (audioRef.current) {
+      audioRef.current.playbackRate = newSpeed;
+    }
+  };
+
+  const skipTime = (seconds: number) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const targetDuration = duration || monument.audioDurationSeconds || 60;
+    const newTime = Math.max(0, Math.min(targetDuration, audio.currentTime + seconds));
+    audio.currentTime = newTime;
+    setCurrentTime(newTime);
+    setProgress((newTime / targetDuration) * 100);
   };
 
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -282,10 +296,20 @@ export const AudioGuidePlayer: React.FC<AudioGuidePlayerProps> = ({
             {/* Playback speed */}
             <button
               onClick={toggleSpeed}
-              className="px-2 py-1 rounded-lg bg-stone-800 hover:bg-stone-700 text-[11px] sm:text-xs font-bold text-slate-300 transition-colors cursor-pointer shrink-0"
+              className="px-2 py-1 rounded-lg bg-stone-800 hover:bg-stone-700 text-[11px] sm:text-xs font-bold text-amber-300 border border-stone-700 transition-colors cursor-pointer shrink-0"
               title="Change playback speed"
             >
               {playbackSpeed}x
+            </button>
+
+            {/* Rewind 15s */}
+            <button
+              onClick={() => skipTime(-15)}
+              className="p-1.5 rounded-full hover:bg-stone-800 text-stone-300 hover:text-amber-400 transition-colors cursor-pointer shrink-0"
+              title="Rewind 15 seconds"
+              aria-label="Rewind 15 seconds"
+            >
+              <RotateCcw className="w-4 h-4" />
             </button>
 
             {/* Play/Pause Button */}
@@ -302,6 +326,16 @@ export const AudioGuidePlayer: React.FC<AudioGuidePlayerProps> = ({
               ) : (
                 <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current ml-0.5" />
               )}
+            </button>
+
+            {/* Fast Forward 15s */}
+            <button
+              onClick={() => skipTime(15)}
+              className="p-1.5 rounded-full hover:bg-stone-800 text-stone-300 hover:text-amber-400 transition-colors cursor-pointer shrink-0"
+              title="Forward 15 seconds"
+              aria-label="Forward 15 seconds"
+            >
+              <RotateCw className="w-4 h-4" />
             </button>
 
             {/* Toggle Transcript */}

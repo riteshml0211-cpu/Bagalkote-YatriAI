@@ -239,22 +239,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
             <span>{isKn ? 'ವೆಬ್‌ಸೈಟ್‌ನ ಪ್ರಮುಖ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಅನ್ವೇಷಿಸಿ:' : 'Explore All Core Features Directly:'}</span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-2.5">
-            <button
-              onClick={() => onQuickAction('transportation')}
-              className="flex items-center gap-2 p-2.5 rounded-xl bg-linear-to-r from-amber-600/40 to-amber-700/40 hover:from-amber-500/60 hover:to-amber-600/60 border border-amber-400/40 text-left transition-all active:scale-95 cursor-pointer"
-            >
-              <Train className="w-4 h-4 text-amber-300 shrink-0" />
-              <div className="min-w-0">
-                <span className="block text-xs font-bold text-white truncate">
-                  {isKn ? 'ಸಾರಿಗೆ & ರೈಲು/ಬಸ್' : 'Transit & Reach'}
-                </span>
-                <span className="block text-[10px] text-amber-200 truncate">
-                  {isKn ? 'ಊರು ನಮೂದಿಸಿ' : 'Enter Departure'}
-                </span>
-              </div>
-            </button>
-
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-2.5">
             <button
               onClick={() => onQuickAction('destinations')}
               className="flex items-center gap-2 p-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-left transition-all active:scale-95 cursor-pointer"
@@ -262,7 +247,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               <Landmark className="w-4 h-4 text-amber-300 shrink-0" />
               <div className="min-w-0">
                 <span className="block text-xs font-bold text-white truncate">
-                  {isKn ? 'ಗುಹಾ ದೇವಾಲಯಗಳು' : 'Monuments'}
+                  {isKn ? 'ಗುಹಾ ದೇವಾಲಯಗಳು' : 'Explore Sites'}
                 </span>
                 <span className="block text-[10px] text-slate-300 truncate">
                   {isKn ? '೧೫೦+ ದೇವಾಲಯಗಳು' : '150+ Temples'}
@@ -277,25 +262,10 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               <MapPin className="w-4 h-4 text-amber-300 shrink-0" />
               <div className="min-w-0">
                 <span className="block text-xs font-bold text-white truncate">
-                  {isKn ? 'ಸರ್ಕ್ಯೂಟ್ ಮ್ಯಾಪ್' : 'Circuit Map & GPS'}
+                  {isKn ? 'ಸರ್ಕ್ಯೂಟ್ ಮ್ಯಾಪ್' : 'Circuit Map'}
                 </span>
                 <span className="block text-[10px] text-slate-300 truncate">
-                  {isKn ? 'ದಾರಿ & ಕಿ.ಮೀ' : 'Driving Distances'}
-                </span>
-              </div>
-            </button>
-
-            <button
-              onClick={() => onQuickAction('scanner')}
-              className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-left hover:bg-amber-400 transition-all active:scale-95 cursor-pointer shadow-md"
-            >
-              <Camera className="w-4 h-4 text-slate-950 shrink-0" />
-              <div className="min-w-0">
-                <span className="block text-xs font-bold truncate">
-                  {isKn ? 'AI ಸ್ಕ್ಯಾನರ್' : 'AI Vision Scanner'}
-                </span>
-                <span className="block text-[10px] text-slate-800 truncate">
-                  {isKn ? 'ಶಿಲ್ಪಕಲೆ ಗುರುತಿಸಿ' : 'Identify Carvings'}
+                  {isKn ? 'ದಾರಿ & ಕಿ.ಮೀ' : 'Driving Routes'}
                 </span>
               </div>
             </button>
@@ -322,25 +292,25 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               <ShoppingBag className="w-4 h-4 text-amber-300 shrink-0" />
               <div className="min-w-0">
                 <span className="block text-xs font-bold text-white truncate">
-                  {isKn ? 'ಇಳಕಲ್ ನೇಕಾರರು' : 'Ilkal Weavers'}
+                  {isKn ? 'ಇಳಕಲ್ ನೇಕಾರರು' : 'Weavers Hub'}
                 </span>
                 <span className="block text-[10px] text-slate-300 truncate">
-                  {isKn ? 'ಜಿ.ಐ. ಸೀರೆ & ಸಂಘಗಳು' : 'GI Silk Handlooms'}
+                  {isKn ? 'ಜಿ.ಐ. ಸೀರೆ & ಸಂಘಗಳು' : 'GI Silk & Crafts'}
                 </span>
               </div>
             </button>
 
             <button
-              onClick={() => onQuickAction('cuisine')}
-              className="flex items-center gap-2 p-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-left transition-all active:scale-95 cursor-pointer"
+              onClick={() => onQuickAction('scanner')}
+              className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-left hover:bg-amber-400 transition-all active:scale-95 cursor-pointer shadow-md"
             >
-              <Utensils className="w-4 h-4 text-amber-300 shrink-0" />
+              <Camera className="w-4 h-4 text-slate-950 shrink-0" />
               <div className="min-w-0">
-                <span className="block text-xs font-bold text-white truncate">
-                  {isKn ? 'ಖಾನಾವಳಿ ಊಟ' : 'Local Cuisine'}
+                <span className="block text-xs font-bold truncate">
+                  {isKn ? 'AI ಸ್ಕ್ಯಾನರ್' : 'AI Scanner'}
                 </span>
-                <span className="block text-[10px] text-slate-300 truncate">
-                  {isKn ? 'ಜೋಳದ ರೊಟ್ಟಿ' : 'Jolada Rotti Oota'}
+                <span className="block text-[10px] text-slate-800 truncate">
+                  {isKn ? 'ಶಿಲ್ಪಕಲೆ ಗುರುತಿಸಿ' : 'Identify Carvings'}
                 </span>
               </div>
             </button>
@@ -352,25 +322,25 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               <Award className="w-4 h-4 text-amber-300 shrink-0" />
               <div className="min-w-0">
                 <span className="block text-xs font-bold text-white truncate">
-                  {isKn ? 'ಟೂಲ್ಕಿಟ್ & ಮುದ್ರೆ' : 'Traveler Toolkit'}
+                  {isKn ? 'ಟೂಲ್ಕಿಟ್ & ಮುದ್ರೆ' : 'Toolkit'}
                 </span>
                 <span className="block text-[10px] text-slate-300 truncate">
-                  {isKn ? 'ಕನ್ನಡ ಆಡಿಯೋ & SOS' : 'Phrasebook & Passport'}
+                  {isKn ? 'ಕನ್ನಡ & SOS' : 'Phrasebook & SOS'}
                 </span>
               </div>
             </button>
 
             <button
-              onClick={() => onQuickAction('audio')}
-              className="col-span-2 sm:col-span-1 flex items-center gap-2 p-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-left transition-all active:scale-95 cursor-pointer"
+              onClick={() => onQuickAction('transportation')}
+              className="flex items-center gap-2 p-2.5 rounded-xl bg-linear-to-r from-amber-600/40 to-amber-700/40 hover:from-amber-500/60 hover:to-amber-600/60 border border-amber-400/40 text-left transition-all active:scale-95 cursor-pointer"
             >
-              <Volume2 className="w-4 h-4 text-amber-300 shrink-0" />
+              <Train className="w-4 h-4 text-amber-300 shrink-0" />
               <div className="min-w-0">
                 <span className="block text-xs font-bold text-white truncate">
-                  {isKn ? 'ಆಡಿಯೋ ಗೈಡ್' : 'Audio Tour'}
+                  {isKn ? 'ಸಾರಿಗೆ & ರೈಲು/ಬಸ್' : 'Transit Hub'}
                 </span>
-                <span className="block text-[10px] text-slate-300 truncate">
-                  {isKn ? 'ಕಥೆಗಳು & ಧ್ವನಿ' : 'English & Kannada'}
+                <span className="block text-[10px] text-amber-200 truncate">
+                  {isKn ? 'ಎಲ್ಲಾ ಸೌಲಭ್ಯಗಳು' : 'All Features'}
                 </span>
               </div>
             </button>
