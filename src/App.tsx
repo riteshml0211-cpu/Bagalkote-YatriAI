@@ -15,7 +15,7 @@ import { Footer } from './components/Footer';
 import { Language, Monument } from './types';
 import { MONUMENTS } from './data/heritageData';
 import { TRANSLATIONS } from './data/translations';
-import { Sparkles, MessageSquare, ArrowUp } from 'lucide-react';
+import { Sparkles, MessageSquare, ArrowUp, Compass, MapPin, Calendar, Camera, Wrench, Bus, Layers, ScrollText } from 'lucide-react';
 
 export default function App() {
   const [language, setLanguage] = useState<Language>('en');
@@ -28,6 +28,8 @@ export default function App() {
   const [chatInitialQuestion, setChatInitialQuestion] = useState<string | null>(null);
   const [weaversTab, setWeaversTab] = useState<'sarees' | 'cooperatives' | 'validator' | 'cuisine' | 'homestays'>('sarees');
   const [departureCity, setDepartureCity] = useState<string>('Bengaluru');
+  const [viewMode, setViewMode] = useState<'tabs' | 'scroll'>('tabs');
+  const [activeTab, setActiveTab] = useState<string>('destinations');
 
   const t = TRANSLATIONS[language];
 
@@ -52,35 +54,27 @@ export default function App() {
     });
   };
 
-  // Scroll to section smoothly
+  // Scroll to section smoothly or switch tab
   const scrollToSection = (sectionId: string) => {
     setActiveSection(sectionId);
     if (sectionId === 'hero') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-    if (sectionId === 'validator') {
-      setWeaversTab('validator');
-      const elem = document.getElementById('weavers');
-      if (elem) {
-        elem.scrollIntoView({ behavior: 'smooth' });
-      }
-      return;
+    setViewMode('tabs');
+    if (sectionId === 'validator' || sectionId === 'cuisine') {
+      setWeaversTab(sectionId === 'validator' ? 'validator' : 'cuisine');
+      setActiveTab('weavers');
+    } else if (sectionId === 'transportation') {
+      setActiveTab('transport');
+    } else {
+      setActiveTab(sectionId);
     }
-    if (sectionId === 'cuisine') {
-      setWeaversTab('cuisine');
-      const elem = document.getElementById('weavers');
-      if (elem) {
-        elem.scrollIntoView({ behavior: 'smooth' });
-      }
-      return;
-    }
-    if (sectionId === 'weavers') {
-      setWeaversTab('sarees');
-    }
-    const elem = document.getElementById(sectionId);
-    if (elem) {
-      elem.scrollIntoView({ behavior: 'smooth' });
+    const tabContainer = document.getElementById('modern-tabs-container');
+    if (tabContainer) {
+      tabContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      window.scrollTo({ top: 480, behavior: 'smooth' });
     }
   };
 
@@ -240,7 +234,7 @@ export default function App() {
       />
 
       <main className={`flex-1 w-full overflow-x-hidden ${activeMonument ? 'pb-32 sm:pb-24' : ''}`}>
-        {/* 1. First Page / Hero Banner */}
+        {/* Hero Banner (Always on top) */}
         <HeroBanner
           language={language}
           onQuickAction={handleQuickAction}
@@ -248,63 +242,184 @@ export default function App() {
           onSelectDepartureCity={handleSelectDepartureCity}
         />
 
-        {/* 2. Explore (Destination Explorer) */}
-        <DestinationExplorer
-          language={language}
-          onPlayMonumentAudio={handlePlayMonumentAudio}
-          activeMonument={activeMonument}
-          isPlayingAudio={isPlayingAudio}
-          onAskAi={(q) => {
-            setChatInitialQuestion(q);
-            setIsChatOpen(true);
-          }}
-        />
+        {/* Modern Tabbed View Controls & Sticky Bar */}
+        <div id="modern-tabs-container" className="sticky top-15 sm:top-20 z-30 bg-white/95 backdrop-blur-md border-b border-amber-900/10 shadow-xs">
+          <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex flex-col sm:flex-row items-center justify-between gap-3">
+            
+            {/* Tab Buttons Scrollable */}
+            <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto no-scrollbar pb-1 sm:pb-0">
+              {[
+                { id: 'destinations', label: language === 'kn' ? 'ಸ್ಮಾರಕಗಳು' : 'Destinations', icon: Compass },
+                { id: 'circuit', label: language === 'kn' ? 'ಸರ್ಕ್ಯೂಟ್ ನಕ್ಷೆ' : 'Circuit Map', icon: MapPin },
+                { id: 'planner', label: language === 'kn' ? 'ಪ್ರವಾಸ ಯೋಜಕ' : 'Trip Planner', icon: Calendar },
+                { id: 'weavers', label: language === 'kn' ? 'ಕೈಮಗ್ಗ & ಕರಕುಶಲ' : 'Weavers Hub', icon: Sparkles },
+                { id: 'scanner', label: language === 'kn' ? 'AI ಸ್ಕ್ಯಾನರ್' : 'AI Scanner', icon: Camera },
+                { id: 'toolkit', label: language === 'kn' ? 'ಪ್ರಯಾಣಿಕರ ಕಿಟ್' : 'Toolkit', icon: Wrench },
+                { id: 'transport', label: language === 'kn' ? 'ಸಾರಿಗೆ & ಮಾರ್ಗಗಳು' : 'Transit Hub', icon: Bus },
+              ].map((tab) => {
+                const Icon = tab.icon;
+                const isActive = viewMode === 'tabs' && activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setViewMode('tabs');
+                      setActiveTab(tab.id);
+                    }}
+                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 cursor-pointer ${
+                      isActive
+                        ? 'bg-amber-600 text-white shadow-md shadow-amber-900/25 scale-105'
+                        : 'bg-slate-100 hover:bg-amber-50 text-slate-700 hover:text-amber-900'
+                    }`}
+                  >
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-amber-200' : 'text-slate-500'}`} />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
 
-        {/* 3. The Chalukya Heritage Circuit Map & GPS Driving Routes */}
-        <CircuitMapExplorer
-          language={language}
-          onPlayMonumentAudio={handlePlayMonumentAudio}
-        />
+            {/* View Mode Toggle: Tabs vs Full Scroll */}
+            <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl shrink-0 self-end sm:self-center border border-slate-200">
+              <button
+                onClick={() => setViewMode('tabs')}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  viewMode === 'tabs'
+                    ? 'bg-white text-amber-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+                title="Switch to compact tabbed view"
+              >
+                <Layers className="w-3.5 h-3.5 text-amber-600" />
+                <span>{language === 'kn' ? 'ಟ್ಯಾಬ್ ವೀಕ್ಷಣೆ' : 'Tabbed View'}</span>
+              </button>
+              <button
+                onClick={() => setViewMode('scroll')}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  viewMode === 'scroll'
+                    ? 'bg-white text-amber-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+                title="Switch to full vertical scroll"
+              >
+                <ScrollText className="w-3.5 h-3.5 text-amber-600" />
+                <span>{language === 'kn' ? 'ಸಂಪೂರ್ಣ ಸ್ಕ್ರೋಲ್' : 'Full Scroll'}</span>
+              </button>
+            </div>
 
-        {/* 4. Smart Expedition & Heritage Itinerary */}
-        <TripPlanner
-          language={language}
-          onPlayMonumentAudio={handlePlayMonumentAudio}
-          onAskAi={(topic) => {
-            setChatInitialQuestion(topic);
-            setIsChatOpen(true);
-          }}
-        />
+          </div>
+        </div>
 
-        {/* 5. The Weavers Hub & North Karnataka Heritage */}
-        <WeaversHub
-          language={language}
-          activeTab={weaversTab}
-          onTabChange={setWeaversTab}
-          onAskAi={(topic) => {
-            setChatInitialQuestion(topic);
-            setIsChatOpen(true);
-          }}
-        />
-
-        {/* 6. Visual Monument Scanner */}
-        <MonumentScanner
-          language={language}
-          onPlayAudioSnippet={handlePlayCustomSnippet}
-          onAskAiAboutMonument={handleAskAiAboutMonument}
-        />
-
-        {/* 7. Traveler Toolkit & Heritage Passport */}
-        <TravelerToolkit
-          language={language}
-          onPlaySpeech={handlePlaySpeech}
-        />
-
-        {/* 8. Transit & How to Reach Hub */}
-        <TransportationHub
-          language={language}
-          initialDepartureCity={departureCity}
-        />
+        {/* Content Area: Tabbed vs Full Scroll */}
+        {viewMode === 'tabs' ? (
+          <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6">
+            {activeTab === 'destinations' && (
+              <DestinationExplorer
+                language={language}
+                onPlayMonumentAudio={handlePlayMonumentAudio}
+                activeMonument={activeMonument}
+                isPlayingAudio={isPlayingAudio}
+                onAskAi={(q) => {
+                  setChatInitialQuestion(q);
+                  setIsChatOpen(true);
+                }}
+              />
+            )}
+            {activeTab === 'circuit' && (
+              <CircuitMapExplorer
+                language={language}
+                onPlayMonumentAudio={handlePlayMonumentAudio}
+              />
+            )}
+            {activeTab === 'planner' && (
+              <TripPlanner
+                language={language}
+                onPlayMonumentAudio={handlePlayMonumentAudio}
+                onAskAi={(topic) => {
+                  setChatInitialQuestion(topic);
+                  setIsChatOpen(true);
+                }}
+              />
+            )}
+            {activeTab === 'weavers' && (
+              <WeaversHub
+                language={language}
+                activeTab={weaversTab}
+                onTabChange={setWeaversTab}
+                onAskAi={(topic) => {
+                  setChatInitialQuestion(topic);
+                  setIsChatOpen(true);
+                }}
+              />
+            )}
+            {activeTab === 'scanner' && (
+              <MonumentScanner
+                language={language}
+                onPlayAudioSnippet={handlePlayCustomSnippet}
+                onAskAiAboutMonument={handleAskAiAboutMonument}
+              />
+            )}
+            {activeTab === 'toolkit' && (
+              <TravelerToolkit
+                language={language}
+                onPlaySpeech={handlePlaySpeech}
+              />
+            )}
+            {activeTab === 'transport' && (
+              <TransportationHub
+                language={language}
+                initialDepartureCity={departureCity}
+              />
+            )}
+          </div>
+        ) : (
+          <div className="space-y-12">
+            <DestinationExplorer
+              language={language}
+              onPlayMonumentAudio={handlePlayMonumentAudio}
+              activeMonument={activeMonument}
+              isPlayingAudio={isPlayingAudio}
+              onAskAi={(q) => {
+                setChatInitialQuestion(q);
+                setIsChatOpen(true);
+              }}
+            />
+            <CircuitMapExplorer
+              language={language}
+              onPlayMonumentAudio={handlePlayMonumentAudio}
+            />
+            <TripPlanner
+              language={language}
+              onPlayMonumentAudio={handlePlayMonumentAudio}
+              onAskAi={(topic) => {
+                setChatInitialQuestion(topic);
+                setIsChatOpen(true);
+              }}
+            />
+            <WeaversHub
+              language={language}
+              activeTab={weaversTab}
+              onTabChange={setWeaversTab}
+              onAskAi={(topic) => {
+                setChatInitialQuestion(topic);
+                setIsChatOpen(true);
+              }}
+            />
+            <MonumentScanner
+              language={language}
+              onPlayAudioSnippet={handlePlayCustomSnippet}
+              onAskAiAboutMonument={handleAskAiAboutMonument}
+            />
+            <TravelerToolkit
+              language={language}
+              onPlaySpeech={handlePlaySpeech}
+            />
+            <TransportationHub
+              language={language}
+              initialDepartureCity={departureCity}
+            />
+          </div>
+        )}
       </main>
 
       {/* Floating Audio Player Bar */}
