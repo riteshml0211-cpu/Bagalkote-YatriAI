@@ -243,13 +243,30 @@ Return a valid JSON object matching:
       "themeKn": "string",
       "activities": [
         {
+          "id": "string",
           "time": "07:30 AM",
           "title": "string",
           "titleKn": "string",
           "location": "string",
           "description": "string",
           "descriptionKn": "string",
-          "insiderTip": "string"
+          "insiderTip": "string",
+          "photoSpotTip": "string",
+          "crowdLevel": "Low & Serene | Moderate | Golden Hour Peak",
+          "difficulty": "Easy Stroll | Moderate Steps | Uphill Scramble",
+          "durationMins": 90,
+          "monumentId": "badami-caves | bhootanatha-badami | pattadakal-unesco | aihole-cradle | mahakuta-springs | banashankari-temple | kudalasangama-aikya",
+          "alternativeOptions": [
+            {
+              "id": "string",
+              "title": "string",
+              "titleKn": "string",
+              "description": "string",
+              "descriptionKn": "string",
+              "location": "string",
+              "insiderTip": "string"
+            }
+          ]
         }
       ],
       "recommendedMeal": {

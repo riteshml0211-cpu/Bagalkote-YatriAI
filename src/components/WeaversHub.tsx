@@ -31,94 +31,94 @@ export const WeaversHub: React.FC<WeaversHubProps> = ({ language, onAskAi }) => 
         </div>
 
         {/* Section Navigation Tabs */}
-        <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-4 mb-10 no-scrollbar">
+        <div className="flex items-center justify-start sm:justify-center gap-1.5 sm:gap-2 overflow-x-auto pb-3 mb-8 sm:mb-10 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
           <button
             onClick={() => setActiveTab('sarees')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer shrink-0 ${
+            className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer shrink-0 ${
               activeTab === 'sarees'
                 ? 'bg-amber-700 text-white shadow-md'
                 : 'bg-white text-slate-700 hover:bg-amber-50 border border-amber-200'
             }`}
           >
-            <ShoppingBag className="w-4 h-4" />
+            <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
             <span>{t.weavers.tabs.sarees}</span>
           </button>
 
           <button
             onClick={() => setActiveTab('cooperatives')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer shrink-0 ${
+            className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer shrink-0 ${
               activeTab === 'cooperatives'
                 ? 'bg-amber-700 text-white shadow-md'
                 : 'bg-white text-slate-700 hover:bg-amber-50 border border-amber-200'
             }`}
           >
-            <ShieldCheck className="w-4 h-4" />
+            <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
             <span>{t.weavers.tabs.cooperatives}</span>
           </button>
 
           <button
             onClick={() => setActiveTab('cuisine')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer shrink-0 ${
+            className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer shrink-0 ${
               activeTab === 'cuisine'
                 ? 'bg-amber-700 text-white shadow-md'
                 : 'bg-white text-slate-700 hover:bg-amber-50 border border-amber-200'
             }`}
           >
-            <Utensils className="w-4 h-4" />
+            <Utensils className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
             <span>{t.weavers.tabs.cuisine}</span>
           </button>
 
           <button
             onClick={() => setActiveTab('homestays')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer shrink-0 ${
+            className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer shrink-0 ${
               activeTab === 'homestays'
                 ? 'bg-amber-700 text-white shadow-md'
                 : 'bg-white text-slate-700 hover:bg-amber-50 border border-amber-200'
             }`}
           >
-            <Home className="w-4 h-4" />
+            <Home className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
             <span>{t.weavers.tabs.homestays}</span>
           </button>
         </div>
 
         {/* Tab 1: GI-Tagged Ilkal Sarees & Living Weaving Craft */}
         {activeTab === 'sarees' && (
-          <div className="space-y-10 animate-in fade-in duration-300">
+          <div className="space-y-8 sm:space-y-10 animate-in fade-in duration-300">
             {/* Story Showcase Card */}
-            <div className="bg-white rounded-3xl border border-amber-200 p-6 sm:p-10 shadow-lg overflow-hidden relative">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div className="lg:col-span-7 space-y-4">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-bold border border-amber-300">
-                    <Award className="w-3.5 h-3.5 text-amber-700" />
+            <div className="bg-white rounded-2xl sm:rounded-3xl border border-amber-200 p-4 sm:p-8 lg:p-10 shadow-lg overflow-hidden relative">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
+                <div className="lg:col-span-7 space-y-3 sm:space-y-4">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-[11px] sm:text-xs font-bold border border-amber-300">
+                    <Award className="w-3.5 h-3.5 text-amber-700 shrink-0" />
                     <span>Geographical Indication (GI Tag #43)</span>
                   </div>
-                  <h3 className="font-serif text-2xl sm:text-3xl font-bold text-slate-900">
+                  <h3 className="font-serif text-xl sm:text-3xl font-bold text-slate-900 leading-tight">
                     {t.weavers.sareeStoryTitle}
                   </h3>
-                  <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
+                  <p className="text-xs sm:text-base text-slate-700 leading-relaxed">
                     {t.weavers.sareeStoryPara}
                   </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                    <div className="p-3 bg-amber-50 rounded-xl border border-amber-200">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 sm:pt-2">
+                    <div className="p-2.5 sm:p-3 bg-amber-50 rounded-xl border border-amber-200">
                       <span className="block text-xs font-bold text-amber-900">Topetenchi Pallu</span>
                       <span className="text-[11px] text-slate-600">
                         {language === 'kn' ? 'ಕೆಂಪು ರೇಷ್ಮೆಯ ಭವ್ಯ ಸೆರಗು' : 'Signature crimson silk pallu with white temple spires'}
                       </span>
                     </div>
-                    <div className="p-3 bg-amber-50 rounded-xl border border-amber-200">
+                    <div className="p-2.5 sm:p-3 bg-amber-50 rounded-xl border border-amber-200">
                       <span className="block text-xs font-bold text-amber-900">Kondi Technique</span>
                       <span className="text-[11px] text-slate-600">
                         {language === 'kn' ? 'ಪ್ರಾಚೀನ ಗಂಟು ನೇಯ್ಗೆ' : 'Ancient warp-interlocking joint without cutting warp'}
                       </span>
                     </div>
-                    <div className="p-3 bg-amber-50 rounded-xl border border-amber-200">
+                    <div className="p-2.5 sm:p-3 bg-amber-50 rounded-xl border border-amber-200">
                       <span className="block text-xs font-bold text-amber-900">Kasuti Embroidery</span>
                       <span className="text-[11px] text-slate-600">
                         {language === 'kn' ? 'ದಾರದ ಲೆಕ್ಕದ ಕೈ ಕಸೂತಿ' : 'Thread-counted geometric temple chariot motifs'}
                       </span>
                     </div>
                   </div>
-                  <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-900 font-medium">
+                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-900 font-medium">
                     {t.weavers.buyDirectNote}
                   </div>
                 </div>

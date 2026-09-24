@@ -56,14 +56,14 @@ export const DestinationExplorer: React.FC<DestinationExplorerProps> = ({
         </div>
 
         {/* Cluster Filter Buttons */}
-        <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-4 mb-10 no-scrollbar">
+        <div className="flex items-center justify-start sm:justify-center gap-1.5 sm:gap-2 overflow-x-auto pb-3 mb-8 sm:mb-10 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
           {clusterFilters.map((tab) => {
             const isSelected = selectedCluster === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setSelectedCluster(tab.id)}
-                className={`shrink-0 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                className={`shrink-0 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                   isSelected
                     ? 'bg-amber-600 text-white shadow-md shadow-amber-900/20'
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
@@ -76,7 +76,7 @@ export const DestinationExplorer: React.FC<DestinationExplorerProps> = ({
         </div>
 
         {/* Monuments Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {filteredMonuments.map((monument) => {
             const isThisAudioPlaying =
               isPlayingAudio && activeMonument?.id === monument.id;
@@ -84,7 +84,7 @@ export const DestinationExplorer: React.FC<DestinationExplorerProps> = ({
             return (
               <div
                 key={monument.id}
-                className="group bg-white rounded-3xl border border-amber-200/80 hover:border-amber-400 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col"
+                className="group bg-white rounded-2xl sm:rounded-3xl border border-amber-200/80 hover:border-amber-400 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col"
               >
                 {/* Image Header with Badges */}
                 <div className="relative aspect-16/10 overflow-hidden bg-slate-900">
@@ -124,42 +124,42 @@ export const DestinationExplorer: React.FC<DestinationExplorerProps> = ({
                 </div>
 
                 {/* Card Content */}
-                <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                <div className="p-4 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
                   <div>
-                    <h3 className="font-serif font-bold text-xl text-slate-900 group-hover:text-amber-800 transition-colors">
+                    <h3 className="font-serif font-bold text-lg sm:text-xl text-slate-900 group-hover:text-amber-800 transition-colors">
                       {language === 'kn' ? monument.nameKn : monument.name}
                     </h3>
                     <p className="text-xs text-amber-800 font-semibold mt-1">
                       {language === 'kn' ? monument.dynastyKn : monument.dynasty} • {monument.century}
                     </p>
-                    <p className="mt-2.5 text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed">
+                    <p className="mt-2 text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed">
                       {language === 'kn' ? monument.descriptionKn : monument.descriptionEn}
                     </p>
                   </div>
 
                   {/* Operational Details Row */}
                   <div className="pt-3 border-t border-slate-100 space-y-2 text-xs text-slate-700">
-                    <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-1.5 text-slate-500">
-                        <Clock className="w-3.5 h-3.5 text-amber-600" />
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="flex items-center gap-1.5 text-slate-500 shrink-0">
+                        <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                         <span>{t.destinations.timingsTitle}</span>
                       </span>
-                      <span className="font-semibold text-slate-800">
+                      <span className="font-semibold text-slate-800 text-right truncate">
                         {language === 'kn' ? monument.operationalTimingsKn : monument.operationalTimings}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-1.5 text-slate-500">
-                        <Ticket className="w-3.5 h-3.5 text-amber-600" />
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="flex items-center gap-1.5 text-slate-500 shrink-0">
+                        <Ticket className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                         <span>{t.destinations.entryTitle}</span>
                       </span>
-                      <span className="font-semibold text-slate-800">
+                      <span className="font-semibold text-slate-800 text-right truncate">
                         {monument.entryFee.indian === 0
                           ? language === 'kn'
                             ? 'ಉಚಿತ ಪ್ರವೇಶ'
                             : 'Free Entry'
-                          : `₹${monument.entryFee.indian} (Indian) / ₹${monument.entryFee.foreigner} (Foreign)`}
+                          : `₹${monument.entryFee.indian} (Ind) / ₹${monument.entryFee.foreigner} (Frn)`}
                       </span>
                     </div>
                   </div>
@@ -174,8 +174,8 @@ export const DestinationExplorer: React.FC<DestinationExplorerProps> = ({
                           : 'bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300'
                       }`}
                     >
-                      <Volume2 className="w-3.5 h-3.5" />
-                      <span>
+                      <Volume2 className="w-3.5 h-3.5 shrink-0" />
+                      <span className="truncate">
                         {isThisAudioPlaying
                           ? language === 'kn'
                             ? 'ಆಲಿಸುತ್ತಿದೆ...'
@@ -186,7 +186,7 @@ export const DestinationExplorer: React.FC<DestinationExplorerProps> = ({
 
                     <button
                       onClick={() => setModalMonument(monument)}
-                      className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition-colors cursor-pointer"
+                      className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition-colors cursor-pointer shrink-0"
                       title={t.destinations.viewDetails}
                     >
                       <Info className="w-4 h-4" />
@@ -200,8 +200,8 @@ export const DestinationExplorer: React.FC<DestinationExplorerProps> = ({
 
         {/* Modal: Full Monument Details */}
         {modalMonument && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-            <div className="bg-white w-full max-w-3xl max-h-[90vh] rounded-3xl shadow-2xl overflow-y-auto border border-amber-200 flex flex-col">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+            <div className="bg-white w-full max-w-3xl max-h-[90vh] rounded-2xl sm:rounded-3xl shadow-2xl overflow-y-auto border border-amber-200 flex flex-col">
               {/* Modal Header */}
               <div className="relative aspect-16/9 sm:aspect-21/9 bg-slate-900 shrink-0">
                 <img
@@ -217,15 +217,15 @@ export const DestinationExplorer: React.FC<DestinationExplorerProps> = ({
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 <button
                   onClick={() => setModalMonument(null)}
-                  className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/60 text-white hover:bg-black flex items-center justify-center transition-colors cursor-pointer"
+                  className="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/60 text-white hover:bg-black flex items-center justify-center transition-colors cursor-pointer"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
-                <div className="absolute bottom-4 left-6 right-6 text-white">
+                <div className="absolute bottom-3 left-4 right-4 sm:bottom-4 sm:left-6 sm:right-6 text-white">
                   <span className="px-2.5 py-0.5 rounded-full bg-amber-600 text-[10px] font-bold uppercase tracking-wider">
                     {language === 'kn' ? modalMonument.clusterKn : modalMonument.cluster}
                   </span>
-                  <h3 className="font-serif text-2xl sm:text-3xl font-bold mt-1">
+                  <h3 className="font-serif text-xl sm:text-3xl font-bold mt-1">
                     {language === 'kn' ? modalMonument.nameKn : modalMonument.name}
                   </h3>
                   <p className="text-xs text-amber-300 font-medium">
@@ -235,7 +235,7 @@ export const DestinationExplorer: React.FC<DestinationExplorerProps> = ({
               </div>
 
               {/* Modal Content */}
-              <div className="p-6 sm:p-8 space-y-6">
+              <div className="p-4 sm:p-8 space-y-5 sm:space-y-6">
                 {/* Audio guide trigger banner inside modal */}
                 <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">

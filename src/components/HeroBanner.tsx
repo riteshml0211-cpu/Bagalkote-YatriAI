@@ -69,19 +69,19 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
         </div>
 
         {/* Search Bar */}
-        <form onSubmit={handleSearchSubmit} className="mt-8 max-w-2xl">
-          <div className="relative flex items-center shadow-xl rounded-2xl overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 p-1.5 focus-within:border-amber-400/80 transition-all">
-            <Search className="w-5 h-5 text-amber-300 ml-3 shrink-0" />
+        <form onSubmit={handleSearchSubmit} className="mt-6 sm:mt-8 max-w-2xl">
+          <div className="relative flex items-center shadow-xl rounded-2xl overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 p-1 sm:p-1.5 focus-within:border-amber-400/80 transition-all">
+            <Search className="w-4 h-4 sm:w-5 sm:h-5 text-amber-300 ml-2.5 sm:ml-3 shrink-0" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t.hero.searchPlaceholder}
-              className="w-full px-3 py-2.5 bg-transparent text-white placeholder-slate-300 text-sm sm:text-base focus:outline-hidden"
+              className="w-full min-w-0 px-2.5 sm:px-3 py-2 sm:py-2.5 bg-transparent text-white placeholder-slate-300 text-xs sm:text-base focus:outline-hidden"
             />
             <button
               type="submit"
-              className="shrink-0 px-4 sm:px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm tracking-wide transition-all shadow-md active:scale-95 cursor-pointer"
+              className="shrink-0 px-3.5 sm:px-6 py-2 sm:py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm tracking-wide transition-all shadow-md active:scale-95 cursor-pointer"
             >
               {t.hero.searchBtn}
             </button>
@@ -89,49 +89,49 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
         </form>
 
         {/* Quick Action CTAs */}
-        <div className="mt-6 flex flex-wrap items-center gap-3">
+        <div className="mt-5 sm:mt-6 grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2.5 sm:gap-3">
           <button
             onClick={() => onQuickAction('scanner')}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs sm:text-sm hover:bg-amber-400 transition-all shadow-lg shadow-amber-900/40 active:scale-95 cursor-pointer"
+            className="w-full sm:w-auto justify-center flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs sm:text-sm hover:bg-amber-400 transition-all shadow-lg shadow-amber-900/40 active:scale-95 cursor-pointer"
           >
-            <Camera className="w-4 h-4 text-slate-900" />
+            <Camera className="w-4 h-4 text-slate-900 shrink-0" />
             <span>{t.hero.quickScanBtn}</span>
           </button>
 
           <button
             onClick={() => onQuickAction('audio')}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/20 transition-all backdrop-blur-md active:scale-95 cursor-pointer"
+            className="w-full sm:w-auto justify-center flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/20 transition-all backdrop-blur-md active:scale-95 cursor-pointer"
           >
-            <Volume2 className="w-4 h-4 text-amber-300" />
+            <Volume2 className="w-4 h-4 text-amber-300 shrink-0" />
             <span>{t.hero.audioTourBtn}</span>
           </button>
 
           <button
             onClick={() => onQuickAction('planner')}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/20 transition-all backdrop-blur-md active:scale-95 cursor-pointer"
+            className="w-full sm:w-auto justify-center flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/20 transition-all backdrop-blur-md active:scale-95 cursor-pointer"
           >
-            <MapPin className="w-4 h-4 text-amber-300" />
+            <MapPin className="w-4 h-4 text-amber-300 shrink-0" />
             <span>{t.hero.planTripBtn}</span>
           </button>
         </div>
 
         {/* Heritage Statistics Bar */}
-        <div className="mt-12 sm:mt-16 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 border-t border-white/10 pt-8">
+        <div className="mt-10 sm:mt-16 grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 border-t border-white/10 pt-6 sm:pt-8">
           <div className="bg-white/5 border border-white/10 rounded-xl p-3 sm:p-4 backdrop-blur-xs">
-            <span className="block font-serif text-xl sm:text-2xl font-bold text-amber-300">6 Clusters</span>
-            <span className="text-xs text-slate-300">{t.hero.stats.clusters}</span>
+            <span className="block font-serif text-lg sm:text-2xl font-bold text-amber-300 leading-tight">6 Clusters</span>
+            <span className="text-[11px] sm:text-xs text-slate-300 leading-tight block mt-0.5">{t.hero.stats.clusters}</span>
           </div>
           <div className="bg-white/5 border border-white/10 rounded-xl p-3 sm:p-4 backdrop-blur-xs">
-            <span className="block font-serif text-xl sm:text-2xl font-bold text-amber-300">150+ Temples</span>
-            <span className="text-xs text-slate-300">{t.hero.stats.monuments}</span>
+            <span className="block font-serif text-lg sm:text-2xl font-bold text-amber-300 leading-tight">150+ Temples</span>
+            <span className="text-[11px] sm:text-xs text-slate-300 leading-tight block mt-0.5">{t.hero.stats.monuments}</span>
           </div>
           <div className="bg-white/5 border border-white/10 rounded-xl p-3 sm:p-4 backdrop-blur-xs">
-            <span className="block font-serif text-xl sm:text-2xl font-bold text-amber-300">1,400 Years</span>
-            <span className="text-xs text-slate-300">{t.hero.stats.history}</span>
+            <span className="block font-serif text-lg sm:text-2xl font-bold text-amber-300 leading-tight">1,400 Years</span>
+            <span className="text-[11px] sm:text-xs text-slate-300 leading-tight block mt-0.5">{t.hero.stats.history}</span>
           </div>
           <div className="bg-white/5 border border-white/10 rounded-xl p-3 sm:p-4 backdrop-blur-xs">
-            <span className="block font-serif text-xl sm:text-2xl font-bold text-amber-300">GI Tag #43</span>
-            <span className="text-xs text-slate-300">{t.hero.stats.crafts}</span>
+            <span className="block font-serif text-lg sm:text-2xl font-bold text-amber-300 leading-tight">GI Tag #43</span>
+            <span className="text-[11px] sm:text-xs text-slate-300 leading-tight block mt-0.5">{t.hero.stats.crafts}</span>
           </div>
         </div>
       </div>

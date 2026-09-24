@@ -148,7 +148,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF7F2] text-slate-900 selection:bg-amber-200 selection:text-amber-950 font-sans">
+    <div className="min-h-screen flex flex-col w-full overflow-x-hidden bg-[#FAF7F2] text-slate-900 selection:bg-amber-200 selection:text-amber-950 font-sans">
       {/* Top Sticky Navbar */}
       <Navbar
         language={language}
@@ -161,7 +161,7 @@ export default function App() {
         onOpenChat={() => setIsChatOpen(true)}
       />
 
-      <main className="flex-1">
+      <main className="flex-1 w-full overflow-x-hidden">
         {/* Hero Banner Section */}
         <HeroBanner
           language={language}
@@ -198,7 +198,14 @@ export default function App() {
         />
 
         {/* Smart Trip Planner */}
-        <TripPlanner language={language} />
+        <TripPlanner
+          language={language}
+          onPlayMonumentAudio={handlePlayMonumentAudio}
+          onAskAi={(topic) => {
+            setChatInitialQuestion(topic);
+            setIsChatOpen(true);
+          }}
+        />
       </main>
 
       {/* Floating Audio Player Bar */}
@@ -220,15 +227,15 @@ export default function App() {
       {!isChatOpen && (
         <button
           onClick={() => setIsChatOpen(true)}
-          className={`fixed right-4 sm:right-6 z-40 flex items-center gap-2.5 px-4 sm:px-5 py-3 rounded-full bg-linear-to-r from-amber-600 via-amber-700 to-amber-800 text-white font-bold text-xs sm:text-sm shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 active:scale-95 border-2 border-amber-300/40 cursor-pointer ${
-            activeMonument ? 'bottom-24 sm:bottom-20' : 'bottom-6'
+          className={`fixed right-3 sm:right-6 z-40 flex items-center gap-2 px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-full bg-linear-to-r from-amber-600 via-amber-700 to-amber-800 text-white font-bold text-xs sm:text-sm shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 active:scale-95 border-2 border-amber-300/40 cursor-pointer ${
+            activeMonument ? 'bottom-28 sm:bottom-20' : 'bottom-5 sm:bottom-6'
           }`}
         >
           <div className="relative">
-            <MessageSquare className="w-5 h-5 text-amber-200" />
+            <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-amber-200" />
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-amber-800 animate-pulse" />
           </div>
-          <span>{t.chat.floatingButton}</span>
+          <span className="text-xs sm:text-sm">{t.chat.floatingButton}</span>
         </button>
       )}
 

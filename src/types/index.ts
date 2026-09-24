@@ -124,6 +124,7 @@ export interface MonumentScanResult {
 }
 
 export interface ItineraryActivity {
+  id?: string;
   time: string;
   title: string;
   titleKn: string;
@@ -131,6 +132,21 @@ export interface ItineraryActivity {
   description: string;
   descriptionKn: string;
   insiderTip: string;
+  photoSpotTip?: string;
+  crowdLevel?: 'Low & Serene' | 'Moderate' | 'Golden Hour Peak';
+  difficulty?: 'Easy Stroll' | 'Moderate Steps' | 'Uphill Scramble';
+  durationMins?: number;
+  monumentId?: string;
+  alternativeOptions?: {
+    id: string;
+    title: string;
+    titleKn: string;
+    description: string;
+    descriptionKn: string;
+    location: string;
+    insiderTip?: string;
+    monumentId?: string;
+  }[];
 }
 
 export interface ItineraryDay {
@@ -154,4 +170,5 @@ export interface ItineraryPlan {
   recommendedTransport: string;
   days: ItineraryDay[];
   proTips: string[];
+  archetypeId?: string;
 }
