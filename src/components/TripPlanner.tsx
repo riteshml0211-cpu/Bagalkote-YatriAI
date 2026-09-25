@@ -27,6 +27,8 @@ import {
   ChevronDown,
   ArrowRight,
   ExternalLink,
+  Train,
+  Bus,
 } from 'lucide-react';
 import { Language, ItineraryPlan, ItineraryActivity, Monument } from '../types';
 import { TRANSLATIONS } from '../data/translations';
@@ -54,10 +56,12 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
 
   // State management
   const [selectedArchetypeId, setSelectedArchetypeId] = useState<string>('archaeologist');
-  const [duration, setDuration] = useState<'1-day' | '2-day' | '3-day'>('2-day');
+  const [duration, setDuration] = useState<number>(2);
   const [selectedInterests, setSelectedInterests] = useState<string[]>(['Architecture', 'History']);
   const [pace, setPace] = useState<'relaxed' | 'moderate' | 'active'>('moderate');
-  const [activeTab, setActiveTab] = useState<'timeline' | 'matrix' | 'calculator' | 'essentials'>('timeline');
+  const [activeTab, setActiveTab] = useState<
+    'timeline' | 'matrix' | 'calculator' | 'essentials' | 'alternates' | 'hiddenGems'
+  >('timeline');
   const [showAdvancedControls, setShowAdvancedControls] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -118,12 +122,12 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
   // Handle Archetype Selection
   const handleSelectArchetype = (archetype: ExpeditionArchetype) => {
     setSelectedArchetypeId(archetype.id);
-    setDuration(archetype.recommendedDuration);
+    const dayCount = archetype.recommendedDuration === '1-day' ? 1 : archetype.recommendedDuration === '3-day' ? 3 : 2;
+    setDuration(dayCount);
     setPace(archetype.recommendedPace);
     setSelectedInterests(archetype.interests);
 
-    const dayCount = archetype.recommendedDuration === '1-day' ? 1 : archetype.recommendedDuration === '3-day' ? 3 : 2;
-    setItinerary(getDefaultItinerary(dayCount, archetype.interests, archetype.recommendedPace, archetype.id));
+    setItinerary(getDefaultItinerary(dayCount, archetype.interests, archetype.recommendedPace, archetype.id, language));
   };
 
   const interestOptions = [
@@ -156,7 +160,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
     targetArchetypeId = selectedArchetypeId
   ) => {
     setIsGenerating(true);
-    const dayCount = targetDuration === '1-day' ? 1 : targetDuration === '3-day' ? 3 : 2;
+    const dayCount = targetDuration;
 
     try {
       const controller = new AbortController();
@@ -167,7 +171,7 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
         headers: { 'Content-Type': 'application/json' },
         signal: controller.signal,
         body: JSON.stringify({
-          duration: targetDuration,
+          duration: `${targetDuration}-day`,
           interests: targetInterests,
           pace: targetPace,
           language,
@@ -188,14 +192,13 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
       console.warn('Backend itinerary service unavailable, using curated expedition engine:', err);
     }
 
-    setItinerary(getDefaultItinerary(dayCount, targetInterests, targetPace, targetArchetypeId));
+    setItinerary(getDefaultItinerary(dayCount, targetInterests, targetPace, targetArchetypeId, language));
     setIsGenerating(false);
   };
 
   // Update on language change
   useEffect(() => {
-    const dayCount = duration === '1-day' ? 1 : duration === '3-day' ? 3 : 2;
-    setItinerary(getDefaultItinerary(dayCount, selectedInterests, pace, selectedArchetypeId));
+    setItinerary(getDefaultItinerary(duration, selectedInterests, pace, selectedArchetypeId, language));
   }, [language]);
 
   // Toggle visited activity
@@ -366,10 +369,10 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
 
   // Live Budget Calculation Breakdown
   const budgetCalculations = useMemo(() => {
-    const daysCount = duration === '1-day' ? 1 : duration === '3-day' ? 3 : 2;
+    const daysCount = duration;
 
     // Entry fees: Badami Caves (₹25), Pattadakal (₹40), Aihole (₹25), Mahakuta (Free), Banashankari (Free)
-    const ticketsPerPerson = daysCount === 1 ? 25 : daysCount === 2 ? 90 : 90;
+    const ticketsPerPerson = daysCount === 1 ? 25 : 90 * Math.min(daysCount, 3);
     const totalTickets = ticketsPerPerson * travelPartySize;
 
     // Food estimate per person per day
@@ -380,14 +383,11 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
     // Transport estimate total
     let totalTransport = 0;
     if (travelStyle === 'budget') {
-      // Local autos & KSRTC buses
-      totalTransport = daysCount === 1 ? 400 : daysCount === 2 ? 1100 : 1800;
+      totalTransport = daysCount * 450;
     } else if (travelStyle === 'comfort') {
-      // Private AC Sedan cab
-      totalTransport = daysCount === 1 ? 1600 : daysCount === 2 ? 3800 : 5600;
+      totalTransport = daysCount * 1800;
     } else {
-      // Dedicated Chauffeured SUV + Guide
-      totalTransport = daysCount === 1 ? 3200 : daysCount === 2 ? 7200 : 10500;
+      totalTransport = daysCount * 3500;
     }
 
     // Handloom & Souvenir reserve per party
@@ -489,10 +489,10 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
               {/* Duration */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
-                  {t.planner.durationLabel}
+                  {language === 'kn' ? 'ಪ್ರವಾಸದ ಅವಧಿ (ದಿನಗಳು)' : 'Trip Duration (1-7 Days)'}
                 </label>
-                <div className="grid grid-cols-3 gap-1.5">
-                  {(['1-day', '2-day', '3-day'] as const).map((d) => (
+                <div className="grid grid-cols-4 sm:grid-cols-7 gap-1">
+                  {[1, 2, 3, 4, 5, 6, 7].map((d) => (
                     <button
                       key={d}
                       type="button"
@@ -501,13 +501,13 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
                         generatePlan(d, selectedInterests, pace, selectedArchetypeId);
                         setSelectedDayTab(1);
                       }}
-                      className={`text-center px-2 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                      className={`text-center px-1 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer ${
                         duration === d
                           ? 'bg-amber-600 text-white shadow-xs'
                           : 'bg-white hover:bg-amber-100/50 text-slate-700 border border-amber-200/70'
                       }`}
                     >
-                      {t.planner.durations[d].split(' ')[0]}
+                      {d} {language === 'kn' ? 'ದಿನ' : 'd'}
                     </button>
                   ))}
                 </div>
@@ -637,6 +637,32 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
               >
                 <Luggage className="w-3.5 h-3.5" />
                 <span>{language === 'kn' ? '೪. ಬ್ಯಾಕ್‌ಪ್ಯಾಕ್' : '4. Essentials'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('alternates')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                  activeTab === 'alternates'
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : 'bg-white text-slate-700 hover:bg-amber-100/50 border border-amber-200'
+                }`}
+              >
+                <Repeat className="w-3.5 h-3.5" />
+                <span>{language === 'kn' ? '೫. ಪರ್ಯಾಯಗಳು' : '5. Alternates & Hotels'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('hiddenGems')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                  activeTab === 'hiddenGems'
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : 'bg-white text-slate-700 hover:bg-amber-100/50 border border-amber-200'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>{language === 'kn' ? '೬. ಗುಪ್ತ ರತ್ನಗಳು' : '6. Hidden Gems'}</span>
               </button>
             </div>
 
@@ -1317,6 +1343,176 @@ export const TripPlanner: React.FC<TripPlannerProps> = ({
                   ? '೧. ದೇವಾಲಯಗಳಲ್ಲಿ ಭುಜ ಮತ್ತು ಮೊಣಕಾಲುಗಳನ್ನು ಮುಚ್ಚುವ ಸೌಮ್ಯ ಉಡುಪುಗಳನ್ನು ಧರಿಸಿ. ೨. ಮೆಟ್ಟಿಲುಗಳ ಬಳಿ ಇರುವ ಕೋತಿಗಳಿಗೆ ಆಹಾರ ನೀಡಬೇಡಿ. ೩. ಪವಿತ್ರ ಪುಷ್ಕರಣಿಯಲ್ಲಿ ಸಾಬೂನು ಬಳಸಬೇಡಿ.'
                   : '1. Shoulders and knees must be covered inside functioning temple sanctums. 2. Do not feed or tease the bonnet macaque monkeys on cave staircases. 3. Avoid plastic waste; please dispose of wrappers only in marked ASI bins.'}
               </p>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 5: ALTERNATE TRANSIT & HOTELS */}
+        {activeTab === 'alternates' && (
+          <div className="bg-[#FAF7F2] border border-amber-200/90 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xs space-y-6">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-800 block mb-1">
+                {language === 'kn' ? 'ತುರ್ತು ಸಾರಿಗೆ ಮತ್ತು ವಸತಿ ಪರ್ಯಾಯಗಳು' : 'Contingency & Alternate Options'}
+              </span>
+              <h3 className="font-serif text-xl sm:text-2xl font-bold text-slate-900">
+                {language === 'kn' ? 'ತಪ್ಪಿದ ರೈಲು/ಬಸ್ ಪರ್ಯಾಯ ಮಾರ್ಗಗಳು ಮತ್ತು ಹೋಟೆಲ್ ಆಯ್ಕೆಗಳು' : 'Missed Train/Bus Backups & Alternate Hotels'}
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-600 mt-1">
+                {language === 'kn'
+                  ? 'ನಿಗದಿತ ರೈಲು ಅಥವಾ ಬಸ್ ತಪ್ಪಿಹೋದರೆ ಕೈಗೊಳ್ಳಬೇಕಾದ ಪರ್ಯಾಯ ಮಾರ್ಗಗಳು ಮತ್ತು ಬಜೆಟ್‌ಗೆ ತಕ್ಕ ಹೋಟೆಲ್ ವಿವರ.'
+                  : 'Never get stranded. Here are verified backup transport routes if you miss your direct train or bus, plus alternate accommodation options across comfort tiers.'}
+              </p>
+            </div>
+
+            {/* Missed Train / Bus Backup Plans */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white p-5 rounded-2xl border border-amber-200 shadow-xs space-y-3">
+                <div className="flex items-center gap-2 text-amber-900 font-serif font-bold text-base">
+                  <Train className="w-5 h-5 text-amber-700" />
+                  <span>{language === 'kn' ? 'ನೇರ ರೈಲು ತಪ್ಪಿದರೆ ಏನು ಮಾಡಬೇಕು?' : 'Missed Direct Train to Badami?'}</span>
+                </div>
+                <div className="space-y-2 text-xs sm:text-sm text-slate-700">
+                  <p>
+                    <strong>Alternative 1 (Hubballi Route):</strong> Take any express train or KSRTC bus to <strong>Hubballi Junction (UBL)</strong> or <strong>Gadag Junction (GDG)</strong>. From Hubballi, take a connecting passenger train or taxi to Badami (only 1.5 hours / 65 km away).
+                  </p>
+                  <p>
+                    <strong>Alternative 2 (Bagalkote Town Hub):</strong> Trains arriving at Bagalkote Junction (BGK) (22 km from Badami) have 24/7 KSRTC shuttle buses and auto-rickshaws operating every 30 minutes directly to Badami bus stand.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border border-amber-200 shadow-xs space-y-3">
+                <div className="flex items-center gap-2 text-amber-900 font-serif font-bold text-base">
+                  <Bus className="w-5 h-5 text-amber-700" />
+                  <span>{language === 'kn' ? 'ಬಸ್ ತಪ್ಪಿದರೆ ಅಥವಾ ರಾತ್ರಿ ಪ್ರಯಾಣ' : 'Missed Bus / Overnight Backup'}</span>
+                </div>
+                <div className="space-y-2 text-xs sm:text-sm text-slate-700">
+                  <p>
+                    <strong>Overnight KSRTC / Private Sleeper:</strong> Catch any late evening KSRTC Ambari Dream Class or private AC sleeper from Bengaluru (Majestic/KBS) or Pune heading to <strong>Bagalkote Bypass or Ilkal</strong>. Reaches by 6:00 AM.
+                  </p>
+                  <p>
+                    <strong>Taxi Pooling / Cab Share:</strong> Shared taxi counters operate near Hospet (Hampi) and Hubballi stations for direct door-to-door drop at Badami heritage sites.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Alternate Hotels & Stays */}
+            <div>
+              <h4 className="font-serif font-bold text-base text-slate-900 mb-3">
+                {language === 'kn' ? 'ಶಿಫಾರಸು ಮಾಡಿದ ಪರ್ಯಾಯ ಹೋಟೆಲ್‌ಗಳು & ವಸತಿ' : 'Verified Alternate Hotel & Stay Tiers'}
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {[
+                  {
+                    name: 'The Heritage Resort Badami',
+                    type: language === 'kn' ? 'ಪಾರಂಪರಿಕ ಐಷರಾಮಿ' : 'Heritage Luxury',
+                    price: '₹4,500 - ₹7,500 / night',
+                    vibe: language === 'kn' ? 'ಸ್ವಿಮ್ಮಿಂಗ್ ಪೂಲ್, ಕಣಿವೆ ನೋಟ' : 'Poolside chalets with sandstone cliff views.',
+                  },
+                  {
+                    name: 'KSTDC Mayura Chalukya',
+                    type: language === 'kn' ? 'ಸರ್ಕಾರಿ ವಿಶ್ವಾಸಾರ್ಹ' : 'Official Tourism Stay',
+                    price: '₹2,200 - ₹3,500 / night',
+                    vibe: language === 'kn' ? 'ಸಂಗ್ರಹಾಲಯದ ಬಳಿ, ವಿಶಾಲವಾದ ಉದ್ಯಾನವನ' : 'Sprawling lawns adjacent to Badami Museum.',
+                  },
+                  {
+                    name: 'Hotel Rajsangam International',
+                    type: language === 'kn' ? 'ಮಧ್ಯಮ ಶ್ರೇಣಿ ಆರಾಮ' : 'Mid-Range Comfort',
+                    price: '₹1,800 - ₹2,800 / night',
+                    vibe: language === 'kn' ? 'ಪಟ್ಟಣದ ಮಧ್ಯಭಾಗ, ಎಸಿ ಕೊಠಡಿಗಳು' : 'Modern AC rooms in Badami town center.',
+                  },
+                  {
+                    name: 'Agastya Lake View Homestay',
+                    type: language === 'kn' ? 'ಸ್ಥಳೀಯ ಹೋಮ್‌ಸ್ಟೇ' : 'Cozy Homestay & Inn',
+                    price: '₹800 - ₹1,800 / night',
+                    vibe: language === 'kn' ? 'ಮನೆಯ ಊಟ, ಸಾಂಪ್ರದಾಯಿಕ ಆತಿಥ್ಯ' : 'Family-run stay with homemade Jowar rotti meals.',
+                  },
+                ].map((hotel, idx) => (
+                  <div key={idx} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] font-bold text-amber-800 uppercase block tracking-wider">
+                        {hotel.type}
+                      </span>
+                      <h5 className="font-serif font-bold text-sm text-slate-900 mt-0.5">
+                        {hotel.name}
+                      </h5>
+                      <span className="text-xs font-bold text-emerald-700 block mt-1">
+                        {hotel.price}
+                      </span>
+                      <p className="text-xs text-slate-600 mt-2">
+                        {hotel.vibe}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 6: HIDDEN GEMS */}
+        {activeTab === 'hiddenGems' && (
+          <div className="bg-[#FAF7F2] border border-amber-200/90 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xs space-y-6">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-800 block mb-1">
+                {language === 'kn' ? 'ಯಾರಿಗೂ ತಿಳಿಯದ ರಮಣೀಯ ಸ್ಥಳಗಳು' : 'Off-the-Beaten-Path Treasures'}
+              </span>
+              <h3 className="font-serif text-xl sm:text-2xl font-bold text-slate-900">
+                {language === 'kn' ? 'ಬಾಗಲಕೋಟೆ ಸರ್ಕ್ಯೂಟ್‌ನ ಗುಪ್ತ ರತ್ನಗಳು (ಎಕ್ಸ್‌ಕ್ಲೂಸಿವ್)' : 'Hidden Gem Places That Should Not Be Missed'}
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-600 mt-1">
+                {language === 'kn'
+                  ? 'ಸಾಮಾನ್ಯ ಪ್ರವಾಸಿಗರು ನೋಡದ, ಚಾಲುಕ್ಯರ ಕಾಲದ ರಹಸ್ಯ ದೇವಾಲಯಗಳು, ಸೂರ್ಯಾಸ್ತದ ವೀಕ್ಷಣಾ ತಾಣಗಳು ಮತ್ತು ಕರಕುಶಲ ಗ್ರಾಮಗಳು.'
+                  : 'Discover secret rock-cut shrines, uncrowded sunrise/sunset panoramic bastions, and indigenous craft alleys missed by standard tourist guidebooks.'}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                {
+                  title: language === 'kn' ? '೧. ಕೆಳ ಶೈವಾಲಯ ರಹಸ್ಯ ಕೋಟೆ' : '1. Lower Shivalaya Secret Bastion',
+                  location: 'Badami Northern Hill Top',
+                  desc: language === 'kn' ? 'ಸಂಗ್ರಹಾಲಯದ ಹಿಂದಿನ ಬೆಟ್ಟದ ಮೇಲಿರುವ ಈ ೭ನೇ ಶತಮಾನದ ದೇವಾಲಯದಿಂದ ಅಗಸ್ತ್ಯ ತೀರ್ಥ ಮತ್ತು ಭೂತನಾಥ ದೇವಾಲಯದ ಸಂಪೂರ್ಣ ನೋಟ ದೊರೆಯುತ್ತದೆ. ಇಲ್ಲಿ ಜನಸಂದಣಿ ಕಡಿಮೆ.' : 'Perched on the upper tier behind the Badami Museum hill, offering drone-like panoramic views of Agastya Lake and Bhutanatha shrines without tourist crowds.',
+                  tip: 'Best visited at 6:30 AM for misty sunrise photography.',
+                },
+                {
+                  title: language === 'kn' ? '೨. ಸಿದ್ಧಾಲಯ ಏಕಶಿಲಾ ಗುಹೆ' : '2. Sidhdhalaya Monolithic Cave Shrine',
+                  location: 'Banashankari Outskirts (3 km)',
+                  desc: language === 'kn' ? 'ಯಾವೇ ವಾಣಿಜ್ಯ ಪ್ರಚಾರವಿಲ್ಲದ, ಸಂಪೂರ್ಣ ನಿರ್ಜನವಾದ ೮ನೇ ಶತಮಾನದ ಗುಹಾ ದೇವಾಲಯ. ಇಲ್ಲಿನ ನೈಸರ್ಗಿಕ ಧ್ವನಿ ಅನುರಣನ ಅದ್ಭುತ.' : 'An undiscovered 8th-century rock-cut monolithic shrine carved into pristine red sandstone, complete with ancient natural water cisterns and acoustic echo chambers.',
+                  tip: 'Carry a flashlight to inspect inner sanctum reliefs.',
+                },
+                {
+                  title: language === 'kn' ? '೩. ಮೇಗುತಿ ಬೆಟ್ಟ ಸೂರ್ಯಾಸ್ತ ವೀಕ್ಷಣೆ' : '3. Meguti Hill Jain Temple Sunset Point',
+                  location: 'Aihole Heritage Complex',
+                  desc: language === 'kn' ? 'ಐಹೊಳೆ ಮೇಗುತಿ ಬೆಟ್ಟದ ತುತ್ತತುದಿಗೆ ಸಂಜೆ ೫ನೇ ೩೦ಕ್ಕೆ ಹತ್ತಿದರೆ ಮಳಪ್ರಭಾ ನದಿ ಕಣಿವೆಯ ಮೇಲೆ ಸೂರ್ಯಾಸ್ತದ ಸೌಂದರ್ಯ ಕಣ್ಣಿಗೆ ಹಬ್ಬ.' : 'Climb behind the Meguti temple at 5:45 PM for an ethereal golden hour view over the Malaprabha river valley and Meguti stone inscriptions.',
+                  tip: 'Wear comfortable walking shoes for the rocky footpath.',
+                },
+                {
+                  title: language === 'kn' ? '೪. ಗುಳೇದಗುಡ್ಡ ಖಾನಾ ಕರಕುಶಲ ಬೀದಿ' : '4. Guledagudda Khana Loom Alley',
+                  location: 'Guledagudda Weaving Town (20 km from Badami)',
+                  desc: language === 'kn' ? 'ಸಾಂಪ್ರದಾಯಿಕ ೯ ಗಜದ ಇಳಕಲ್ ಖಾನಾ ಬ್ಲೌಸ್ ಬಟ್ಟೆಗಳನ್ನು ನೈಸರ್ಗಿಕ ನೀಲಿ ಬಣ್ಣದಲ್ಲಿ ತಯಾರಿಸುವ ರಹಸ್ಯ ಬೀದಿಗಳು.' : 'Just 20km from Badami, explore narrow street alleys where master artisans hand-dye traditional Khana blouse fabrics using natural indigo and borders.',
+                  tip: 'Buy direct from weavers for authentic GI-tagged fabric.',
+                },
+              ].map((gem, idx) => (
+                <div key={idx} className="bg-white p-5 rounded-2xl border border-amber-200 shadow-xs flex flex-col justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold text-amber-800 uppercase block tracking-wider">
+                      💎 {gem.location}
+                    </span>
+                    <h4 className="font-serif font-bold text-base text-slate-900 mt-1">
+                      {gem.title}
+                    </h4>
+                    <p className="text-xs sm:text-sm text-slate-700 mt-2 leading-relaxed">
+                      {gem.desc}
+                    </p>
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-1.5 text-xs text-amber-800 font-semibold">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span>Insider Tip: {gem.tip}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}

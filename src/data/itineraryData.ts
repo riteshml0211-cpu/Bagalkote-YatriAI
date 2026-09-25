@@ -1,4 +1,4 @@
-import { ItineraryPlan, ItineraryActivity } from '../types';
+import { ItineraryPlan, ItineraryActivity, ItineraryDay } from '../types';
 
 export interface ExpeditionArchetype {
   id: string;
@@ -326,7 +326,8 @@ export function getDefaultItinerary(
   daysCount: number = 2,
   interests: string[] = ['Architecture', 'History'],
   pace: 'relaxed' | 'moderate' | 'active' = 'moderate',
-  archetypeId: string = 'archaeologist'
+  archetypeId: string = 'archaeologist',
+  language: 'en' | 'kn' = 'en'
 ): ItineraryPlan {
   const isOneDay = daysCount === 1;
   const isThreeDay = daysCount === 3;
@@ -700,40 +701,159 @@ export function getDefaultItinerary(
     },
   };
 
-  const days = isOneDay ? [day1] : isThreeDay ? [day1, day2, day3] : [day1, day2];
+  const dynamicDays: ItineraryDay[] = [];
+  for (let i = 1; i <= Math.min(daysCount, 7); i++) {
+    if (i === 1) dynamicDays.push(day1);
+    else if (i === 2) dynamicDays.push(day2);
+    else if (i === 3) dynamicDays.push(day3);
+    else if (i === 4) {
+      dynamicDays.push({
+        dayNumber: 4,
+        theme: language === 'kn' ? 'ಗುಳೇದಗುಡ್ಡ ಖಾನಾ ಮತ್ತು ಸಾಂಪ್ರದಾಯಿಕ ಕರಕುಶಲ ಗ್ರಾಮ' : 'Guledagudda Khana Weaving & Pottery Craft Village',
+        themeKn: language === 'kn' ? 'ಗುಳೇದಗುಡ್ಡ ಖಾನಾ ಮತ್ತು ಸಾಂಪ್ರದಾಯಿಕ ಕರಕುಶಲ ಗ್ರಾಮ' : 'Guledagudda Khana Weaving & Pottery Craft Village',
+        activities: [
+          {
+            id: 'd4-guledagudda',
+            time: '09:00 AM',
+            title: language === 'kn' ? 'ಗುಳೇದಗುಡ್ಡ ಖಾನಾ ಬ್ಲೌಸ್ ಬಟ್ಟೆ ನೇಯುವ ಬೀದಿಗಳು' : 'Guledagudda Traditional Khana Weaving Alleys',
+            titleKn: 'ಗುಳೇದಗುಡ್ಡ ಖಾನಾ ಬ್ಲೌಸ್ ಬಟ್ಟೆ ನೇಯುವ ಬೀದಿಗಳು',
+            location: 'Guledagudda Town (20 km from Badami)',
+            description: language === 'kn' ? 'ಸಾಂಪ್ರದಾಯಿಕ ಖಣದ ಬಟ್ಟೆಗಳನ್ನು ಕೈಯಿಂದ ನೇಯುವ ನೇಕಾರರ ಮನೆಗಳಿಗೆ ಭೇಟಿ ಮತ್ತು ನೇರ ಖರೀದಿ.' : 'Explore heritage handloom alleys where artisans weave geometric folk-motif Khana blouse fabrics.',
+            descriptionKn: language === 'kn' ? 'ಸಾಂಪ್ರದಾಯಿಕ ಖಣದ ಬಟ್ಟೆಗಳನ್ನು ಕೈಯಿಂದ ನೇಯುವ ನೇಕಾರರ ಮನೆಗಳಿಗೆ ಭೇಟಿ ಮತ್ತು ನೇರ ಖರೀದಿ.' : 'Explore heritage handloom alleys where artisans weave geometric folk-motif Khana blouse fabrics.',
+            insiderTip: 'Direct artisan purchase ensures 100% genuine GI-tagged weave.',
+            crowdLevel: 'Low & Serene',
+            difficulty: 'Easy Stroll',
+            durationMins: 120,
+          },
+          {
+            id: 'd4-pottery',
+            time: '02:00 PM',
+            title: language === 'kn' ? 'ಮಲಪ್ರಭಾ ನದಿ ತೀರದ ಮಡಿಕೆ ಕುಶಲಕರ್ಮಿಗಳು' : 'Malaprabha Riverbank Terracotta Pottery Craft',
+            titleKn: 'ಮಲಪ್ರಭಾ ನದಿ ತೀರದ ಮಡಿಕೆ ಕುಶಲಕರ್ಮಿಗಳು',
+            location: 'Near Bagalkote Rural Belt',
+            description: language === 'kn' ? 'ಪ್ರಾಚೀನ ಚಕ್ರದ ಮೇಲೆ ಮಡಿಕೆಗಳನ್ನು ತಯಾರಿಸುವ ಕರಕುಶಲಕರ್ಮಿಗಳೊಂದಿಗೆ ಸಂವಾದ.' : 'Experience ancient terracotta pottery wheel techniques along the Malaprabha river plains.',
+            descriptionKn: language === 'kn' ? 'ಪ್ರಾಚೀನ ಚಕ್ರದ ಮೇಲೆ ಮಡಿಕೆಗಳನ್ನು ತಯಾರಿಸುವ ಕರಕುಶಲಕರ್ಮಿಗಳೊಂದಿಗೆ ಸಂವಾದ.' : 'Experience ancient terracotta pottery wheel techniques along the Malaprabha river plains.',
+            insiderTip: 'Great opportunity for hands-on clay pottery trial.',
+            crowdLevel: 'Low & Serene',
+            difficulty: 'Easy Stroll',
+            durationMins: 90,
+          },
+        ],
+        recommendedMeal: {
+          place: 'Guledagudda Heritage Bhojanalaya',
+          dish: language === 'kn' ? 'ಜೋಳದ ರೊಟ್ಟಿ ಜತೆ ಎಣ್ಗಾಯಿ ಮತ್ತು ಗಿರಮಿಟ್' : 'Jowar Rotti with Stuffed Brinjal & Spicy Girmit',
+          dishKn: 'ಜೋಳದ ರೊಟ್ಟಿ ಜತೆ ಎಣ್ಗಾಯಿ ಮತ್ತು ಗಿರಮಿಟ್',
+        },
+      });
+    } else if (i === 5) {
+      dynamicDays.push({
+        dayNumber: 5,
+        theme: language === 'kn' ? 'ಆಲಮಟ್ಟಿ ಅಣೆಕಟ್ಟು ಮತ್ತು ಕೃಷ್ಣಾ ನದಿ ಉದ್ಯಾನ' : 'Almatti Dam, Gardens & Krishna River Eco-Park',
+        themeKn: language === 'kn' ? 'ಆಲಮಟ್ಟಿ ಅಣೆಕಟ್ಟು ಮತ್ತು ಕೃಷ್ಣಾ ನದಿ ಉದ್ಯಾನ' : 'Almatti Dam, Gardens & Krishna River Eco-Park',
+        activities: [
+          {
+            id: 'd5-almatti',
+            time: '10:00 AM',
+            title: language === 'kn' ? 'ಆಲಮಟ್ಟಿ ಲಾಲ್ ಬಹದ್ದೂರ್ ಶಾಸ್ತ್ರಿ ಜಲಾಶಯ' : 'Almatti Lal Bahadur Shastri Dam & Mughal Gardens',
+            titleKn: 'ಆಲಮಟ್ಟಿ ಲಾಲ್ ಬಹದ್ದೂರ್ ಶಾಸ್ತ್ರಿ ಜಲಾಶಯ & ಮುಘಲ್ ಉದ್ಯಾನ',
+            location: 'Almatti Reservoir (35 km from Bagalkote)',
+            description: language === 'kn' ? 'ಬೃಹತ್ ಕೃಷ್ಣಾ ಜಲಾಶಯ, ಸುಂದರ ಮುಘಲ್ ಉದ್ಯಾನವನಗಳು ಮತ್ತು ಹಸಿರು ಪರಿಸರದ ವೀಕ್ಷಣೆ.' : 'Marvel at the massive Krishna river hydroelectric dam, terraced Mughal gardens, and rock cascades.',
+            descriptionKn: language === 'kn' ? 'ಬೃಹತ್ ಕೃಷ್ಣಾ ಜಲಾಶಯ, ಸುಂದರ ಮುಘಲ್ ಉದ್ಯಾನವನಗಳು ಮತ್ತು ಹಸಿರು ಪರಿಸರದ ವೀಕ್ಷಣೆ.' : 'Marvel at the massive Krishna river hydroelectric dam, terraced Mughal gardens, and rock cascades.',
+            insiderTip: 'Musical fountain show begins at 6:30 PM.',
+            crowdLevel: 'Moderate',
+            difficulty: 'Easy Stroll',
+            durationMins: 180,
+          },
+        ],
+        recommendedMeal: {
+          place: 'Almatti Lakeside Restaurant',
+          dish: language === 'kn' ? 'ಉತ್ತರ ಕರ್ನಾಟಕ ವಿಶೇಷ ಮೀನು ಸಾರು ಮತ್ತು ಅನ್ನ' : 'North Karnataka Style River Fish Curry & Rice',
+          dishKn: 'ಉತ್ತರ ಕರ್ನಾಟಕ ವಿಶೇಷ ಮೀನು ಸಾರು ಮತ್ತು ಅನ್ನ',
+        },
+      });
+    } else if (i === 6) {
+      dynamicDays.push({
+        dayNumber: 6,
+        theme: language === 'kn' ? 'ಮಹಾಕೂಟ ಮತ್ತು ಬನಶಂಕರಿ ಆಧ್ಯಾತ್ಮಿಕ ಯಾತ್ರೆ' : 'Mahakuta & Banashankari Deep Spiritual Trail',
+        themeKn: language === 'kn' ? 'ಮಹಾಕೂಟ ಮತ್ತು ಬನಶಂಕರಿ ಆಧ್ಯಾತ್ಮಿಕ ಯಾತ್ರೆ' : 'Mahakuta & Banashankari Deep Spiritual Trail',
+        activities: [
+          {
+            id: 'd6-mahakuta',
+            time: '09:00 AM',
+            title: language === 'kn' ? 'ಮಹಾಕೂಟ ದೇವಸ್ಥಾನಗಳ ಸಂಕೀರ್ಣ ಮತ್ತು ಪವಿತ್ರ ಬುಗ್ಗೆಗಳು' : 'Mahakuta Temple Complex & Sacred Springs',
+            titleKn: 'ಮಹಾಕೂಟ ದೇವಸ್ಥಾನಗಳ ಸಂಕೀರ್ಣ ಮತ್ತು ಪವಿತ್ರ ಬುಗ್ಗೆಗಳು',
+            location: 'Mahakuta Glen',
+            description: language === 'kn' ? 'ಪಂಚಮುಖಿ ಶಿವಲಿಂಗ ಮತ್ತು ವಿಷ್ಣು ಪುಷ್ಕರಣಿಯ ಪವಿತ್ರ ನೀರಿನಲ್ಲಿ ಶಾಂತಿ ಅನುಭವಿಸಿ.' : 'Explore the ancient glen of temples and submerged four-faced Shivalinga pool.',
+            descriptionKn: language === 'kn' ? 'ಪಂಚಮುಖಿ ಶಿವಲಿಂಗ ಮತ್ತು ವಿಷ್ಣು ಪುಷ್ಕರಣಿಯ ಪವಿತ್ರ ನೀರಿನಲ್ಲಿ ಶಾಂತಿ ಅನುಭವಿಸಿ.' : 'Explore the ancient glen of temples and submerged four-faced Shivalinga pool.',
+            insiderTip: 'Morning hours are extremely peaceful for meditation.',
+            crowdLevel: 'Low & Serene',
+            difficulty: 'Easy Stroll',
+            durationMins: 120,
+          },
+        ],
+        recommendedMeal: {
+          place: 'Banashankari Temple Courtyard',
+          dish: language === 'kn' ? 'ಬಿಸಿ ಮಿರ್ಚಿ ಬಜ್ಜಿ ಮತ್ತು ಮಸಾಲೆ ಚಹಾ' : 'Hot Mirchi Bajji & Spiced Chai',
+          dishKn: 'ಬಿಸಿ ಮಿರ್ಚಿ ಬಜ್ಜಿ ಮತ್ತು ಮಸಾಲೆ ಚಹಾ',
+        },
+      });
+    } else {
+      dynamicDays.push({
+        dayNumber: 7,
+        theme: language === 'kn' ? 'ಬಾಗಲಕೋಟೆ ಸರ್ಕ್ಯೂಟ್ ವಿರಾಮ ಮತ್ತು ಸ್ಮರಣಿಕೆ ಖರೀದಿ' : 'Grand Finale: Heritage Souvenirs & Sunset Reflection',
+        themeKn: language === 'kn' ? 'ಬಾಗಲಕೋಟೆ ಸರ್ಕ್ಯೂಟ್ ವಿರಾಮ ಮತ್ತು ಸ್ಮರಣಿಕೆ ಖರೀದಿ' : 'Grand Finale: Heritage Souvenirs & Sunset Reflection',
+        activities: [
+          {
+            id: 'd7-finale',
+            time: '10:00 AM',
+            title: language === 'kn' ? 'ಬಾದಾಮಿ ಸ್ಮರಣಿಕೆಗಳು ಮತ್ತು ಕರಕುಶಲ ವಸ್ತುಗಳ ಖರೀದಿ' : 'Badami Handicrafts & Artisan Souvenir Fair',
+            titleKn: 'ಬಾದಾಮಿ ಸ್ಮರಣಿಕೆಗಳು ಮತ್ತು ಕರಕುಶಲ ವಸ್ತುಗಳ ಖರೀದಿ',
+            location: 'Badami Heritage Market',
+            description: language === 'kn' ? 'ಕಲ್ಲಿನ ಕೆತ್ತನೆಗಳು, ಕೈಮಗ್ಗ ಸೀರೆಗಳು ಮತ್ತು ಸ್ಮರಣಿಕೆಗಳ ಖರೀದಿ.' : 'Collect authentic handloom fabrics, stone miniature carvings, and local handicrafts before departure.',
+            descriptionKn: language === 'kn' ? 'ಕಲ್ಲಿನ ಕೆತ್ತನೆಗಳು, ಕೈಮಗ್ಗ ಸೀರೆಗಳು ಮತ್ತು ಸ್ಮರಣಿಕೆಗಳ ಖರೀದಿ.' : 'Collect authentic handloom fabrics, stone miniature carvings, and local handicrafts before departure.',
+            insiderTip: 'Support direct artisan cooperatives.',
+            crowdLevel: 'Moderate',
+            difficulty: 'Easy Stroll',
+            durationMins: 120,
+          },
+        ],
+        recommendedMeal: {
+          place: 'Badami Town Grand Khanavali',
+          dish: language === 'kn' ? 'ಸಂಪೂರ್ಣ ಉತ್ತರ ಕರ್ನಾಟಕ ವಿಶೇಷ ಭೋಜನ' : 'Royal North Karnataka Thali Feast',
+          dishKn: 'ಸಂಪೂರ್ಣ ಉತ್ತರ ಕರ್ನಾಟಕ ವಿಶೇಷ ಭೋಜನ',
+        },
+      });
+    }
+  }
 
   const archetype = EXPEDITION_ARCHETYPES.find((a) => a.id === archetypeId) || EXPEDITION_ARCHETYPES[0];
 
   return {
     title: isOneDay
       ? `${archetype.icon} Badami Express: Cave Sanctuaries & Heritage Sunset`
-      : isThreeDay
-      ? `${archetype.icon} Grand Bagalkote Heritage, Rivers & Silk Circuit`
+      : daysCount >= 3
+      ? `${archetype.icon} Grand ${daysCount}-Day Bagalkote Heritage, Rivers & Silk Circuit`
       : hasHandloom
       ? `${archetype.icon} Chalukya Heritage & Living Ilkal Silk Trail`
       : `${archetype.icon} Classic Chalukya Circuit: Badami, Pattadakal & Aihole`,
     titleKn: isOneDay
       ? `${archetype.icon} ಬಾದಾಮಿ ಎಕ್ಸ್‌ಪ್ರೆಸ್: ಗುಹಾ ದೇವಾಲಯಗಳು ಮತ್ತು ಸೂರ್ಯಾಸ್ತ`
-      : isThreeDay
-      ? `${archetype.icon} ಬಾಗಲಕೋಟೆಯ ಭವ್ಯ ಚಾಲುಕ್ಯ, ನದಿ ಸಂಗಮ ಮತ್ತು ರೇಷ್ಮೆ ಯಾತ್ರೆ`
+      : daysCount >= 3
+      ? `${archetype.icon} ಬಾಗಲಕೋಟೆಯ ಭವ್ಯ ${daysCount} ದಿನಗಳ ಚಾಲುಕ್ಯ, ನದಿ ಸಂಗಮ ಮತ್ತು ರೇಷ್ಮೆ ಯಾತ್ರೆ`
       : hasHandloom
       ? `${archetype.icon} ಚಾಲುಕ್ಯ ಪರಂಪರೆ ಮತ್ತು ಇಳಕಲ್ ರೇಷ್ಮೆ ಯಾತ್ರೆ`
       : `${archetype.icon} ಕ್ಲಾಸಿಕ್ ಚಾಲುಕ್ಯ ಸರ್ಕ್ಯೂಟ್: ಬಾದಾಮಿ, ಪಟ್ಟದಕಲ್ಲು ಮತ್ತು ಐಹೊಳೆ`,
     summary: isOneDay
       ? `A curated 1-day expedition tailored for the ${archetype.name} exploring Badami's 6th-century rock-cut cave temples, North Fort, archaeological museum, and sunset over Agastya Lake at a ${pace} pace.`
-      : isThreeDay
-      ? `A 3-day deep expedition designed for the ${archetype.name} covering rock-cut caves, UNESCO World Heritage monuments, Aihole architecture cradle, sacred Kudalasangama confluence, and GI-tagged Ilkal handloom weavers.`
-      : `A masterfully balanced 2-day journey for the ${archetype.name} exploring Badami caves, Pattadakal UNESCO temples, Aihole architectural cradle, and Mahakuta sacred springs with customized photography and insider advice.`,
+      : `A comprehensive ${daysCount}-day expedition designed for the ${archetype.name} covering rock-cut caves, UNESCO World Heritage monuments, Aihole architecture cradle, sacred Kudalasangama confluence, and GI-tagged Ilkal handloom weavers.`,
     summaryKn: isOneDay
       ? `${archetype.nameKn}ರಿಗೆ ಅನುಗುಣವಾಗಿ ವಿನ್ಯಾಸಗೊಳಿಸಲಾದ ಬಾದಾಮಿಯ ೬ನೇ ಶತಮಾನದ ಗುಹಾ ದೇವಾಲಯಗಳು, ವಸ್ತುಸಂಗ್ರಹಾಲಯ ಮತ್ತು ಅಗಸ್ತ್ಯ ಸರೋವರದ ಸೂರ್ಯಾಸ್ತದ ೧ ದಿನದ ಪ್ರವಾಸ.`
-      : isThreeDay
-      ? `${archetype.nameKn}ರಿಗೆ ಅನುಗುಣವಾಗಿ ಬಾದಾಮಿ, ಪಟ್ಟದಕಲ್ಲು, ಐಹೊಳೆ, ಕೂಡಲಸಂಗಮ ಸಂಗಮ ಕ್ಷೇತ್ರ ಮತ್ತು ಇಳಕಲ್ ಕೈಮಗ್ಗ ನೇಕಾರರ ಸಂಘಗಳನ್ನು ಒಳಗೊಂಡ ಸಂಪೂರ್ಣ ೩ ದಿನಗಳ ಯಾತ್ರೆ.`
-      : `${archetype.nameKn}ರಿಗೆ ಸೂಕ್ತವಾದ ಬಾದಾಮಿ ಗುಹೆಗಳು, ಪಟ್ಟದಕಲ್ಲು ಯುನೆಸ್ಕೋ ತಾಣ, ಐಹೊಳೆ ಕಲಾಶಾಲೆ ಮತ್ತು ಮಹಾಕೂಟದ ಪವಿತ್ರ ಬುಗ್ಗೆಗಳನ್ನು ಒಳಗೊಂಡ ಸಮತೋಲಿತ ೨ ದಿನಗಳ ಪ್ರವಾಸ ಯೋಜನೆ.`,
-    totalDistanceKm: isOneDay ? 25 : isThreeDay ? 175 : 95,
+      : `${archetype.nameKn}ರಿಗೆ ಅನುಗುಣವಾಗಿ ಬಾದಾಮಿ, ಪಟ್ಟದಕಲ್ಲು, ಐಹೊಳೆ, ಕೂಡಲಸಂಗಮ ಸಂಗಮ ಕ್ಷೇತ್ರ ಮತ್ತು ಇಳಕಲ್ ಕೈಮಗ್ಗ ನೇಕಾರರ ಸಂಘಗಳನ್ನು ಒಳಗೊಂಡ ಸಂಪೂರ್ಣ ${daysCount} ದಿನಗಳ ಯಾತ್ರೆ.`,
+    totalDistanceKm: daysCount * 55,
     recommendedTransport: isOneDay
       ? 'Tourist Auto Rickshaw or Walking Trail'
       : 'Private Cab or Tourist Auto / KSRTC Heritage Shuttle',
-    days,
+    days: dynamicDays,
     proTips: [
       'Slip-on shoes are ideal: You will remove footwear at multiple sanctums and temple platforms.',
       'Carry cash (₹500-1000 in small ₹20/50 notes) for local auto rickshaws, fresh coconut water & rural khanavalis.',

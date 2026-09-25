@@ -334,6 +334,21 @@ function getSmartChatResponse(query: string, language: Language): string {
       : 'Ilkal Sarees are celebrated for their patented GI-tagged Topetenwe (palace tower) pallu and unique Kondi joint technique linking cotton body to pure silk pallu. You can visit the traditional weavers colony in Ilkal and Guledgudda to purchase authentic handloom sarees directly from artisan cooperatives.';
   }
 
+  if (
+    q.includes('translate') ||
+    q.includes('translation') ||
+    q.includes('how to say') ||
+    q.includes('kannada') ||
+    q.includes('phrase') ||
+    q.includes('meaning') ||
+    q.includes('ಭಾಷಾಂತರ') ||
+    q.includes('ಹೇಗೆ ಹೇಳುವುದು')
+  ) {
+    return language === 'kn'
+      ? 'ಕನ್ನಡ ಭಾಷಾ ಮತ್ತು ಪ್ರವಾಸಿ ನುಡಿಗಟ್ಟು ಮಾರ್ಗದರ್ಶಿ (Travel Phrasebook):\n• ನಮಸ್ಕಾರ (Namaskara) - Hello / Greetings\n• ಧನ್ಯವಾದಗಳು (Dhanyavaadagalu) - Thank you\n• ಇದು ಎಷ್ಟು? (Idu eshtu?) - How much does this cost?\n• ಬಸ್ ನಿಲ್ದಾಣ ಎಲ್ಲಿದೆ? (Bus nildana ellide?) - Where is the bus stand?\n• ನೀರು ಬೇಕು (Neeru beku) - Need water\n• ರುಚಿಯಾಗಿದೆ (Ruchiagide) - Delicious!\n• ಹೌದು / ಇಲ್ಲ (Houdu / Illa) - Yes / No'
+      : '🔤 Bagalkote Traveler Kannada Phrasebook & Translator:\n• Hello / Greetings: ನಮಸ್ಕಾರ (Namaskara)\n• Thank you: ಧನ್ಯವಾದಗಳು (Dhanyavaadagalu)\n• How much is this?: ಇದು ಎಷ್ಟು? (Idu eshtu?)\n• Where is the bus stand?: ಬಸ್ ನಿಲ್ದಾಣ ಎಲ್ಲಿದೆ? (Bus nildana ellide?)\n• I need drinking water: ಕುಡಿಯುವ ನೀರು ಬೇಕು (Kudiyaalu neeru beku)\n• This is delicious!: ತುಂಬಾ ರುಚಿಯಾಗಿದೆ! (Thumba ruchiagide!)\n• Yes / No: ಹೌದು (Houdu) / ಇಲ್ಲ (Illa)\n• Saree price inquiry: ಈ ಸೀರೆ ಬೆಲೆ ಎಷ್ಟು? (Ee saree bele eshtu?)';
+  }
+
   if (q.includes('best time') || q.includes('season') || q.includes('weather') || q.includes('ಯಾವಾಗ')) {
     return language === 'kn'
       ? 'ಬಾಗಲಕೋಟೆ ಪ್ರವಾಸಕ್ಕೆ ಅಕ್ಟೋಬರ್‌ನಿಂದ ಮಾರ್ಚ್ ಅತ್ಯುತ್ತಮ ಸಮಯ. ಈ ಸಮಯದಲ್ಲಿ ತಂಪು ಹವಾಮಾನವಿದ್ದು, ಶಿಲಾ ತಾಣಗಳನ್ನು ಆರಾಮವಾಗಿ ವೀಕ್ಷಿಸಬಹುದು. ಬೇಸಿಗೆಯಲ್ಲಿ (ಏಪ್ರಿಲ್-ಮೇ) ತಾಪಮಾನ ಹೆಚ್ಚಿರುತ್ತದೆ.'
