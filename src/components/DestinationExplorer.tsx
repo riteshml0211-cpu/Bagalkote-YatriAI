@@ -103,16 +103,16 @@ export const DestinationExplorer: React.FC<DestinationExplorerProps> = ({
         </div>
 
         {/* Cluster Filter Buttons */}
-        <div className="flex items-center justify-start sm:justify-center gap-1.5 sm:gap-2 overflow-x-auto pb-3 mb-8 sm:mb-10 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-8 sm:mb-10 px-2">
           {clusterFilters.map((tab) => {
             const isSelected = selectedCluster === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setSelectedCluster(tab.id)}
-                className={`shrink-0 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-amber-600 text-white shadow-md shadow-amber-900/20'
+                    ? 'bg-amber-600 text-white shadow-md shadow-amber-900/20 scale-105'
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
                 }`}
               >

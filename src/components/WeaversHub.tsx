@@ -47,7 +47,7 @@ export const WeaversHub: React.FC<WeaversHubProps> = ({
         </div>
 
         {/* Section Navigation Tabs */}
-        <div className="flex items-center justify-start sm:justify-center gap-1.5 sm:gap-2 overflow-x-auto pb-3 mb-8 sm:mb-10 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-8 sm:mb-10 px-2">
           <button
             onClick={() => handleTabClick('sarees')}
             className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer shrink-0 ${
