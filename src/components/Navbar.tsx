@@ -189,35 +189,6 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* ALWAYS-VISIBLE ALL-FEATURES HORIZONTAL SCROLL BAR */}
-      {/* Ensures every single feature is immediately visible on the website across all devices without needing to open a hamburger menu */}
-      <div className="bg-slate-900 border-t border-amber-900/30 px-2 sm:px-4 py-1.5 shadow-inner">
-        <div className="max-w-7xl mx-auto flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth">
-          <div className="text-[10px] font-bold text-amber-400 uppercase tracking-widest shrink-0 px-2 py-0.5 rounded-sm bg-amber-500/15 border border-amber-400/30 flex items-center gap-1 mr-1">
-            <Sparkles className="w-3 h-3 text-amber-300" />
-            <span>{language === 'kn' ? 'ವೈಶಿಷ್ಟ್ಯಗಳು' : 'All Features'}</span>
-          </div>
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeSection === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => handleItemClick(item.id)}
-                className={`shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${
-                  isActive
-                    ? 'bg-amber-500 text-slate-950 font-bold shadow-xs scale-102'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800 bg-slate-800/60 border border-slate-700/60'
-                }`}
-              >
-                <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-slate-950' : 'text-amber-400'}`} />
-                <span className="whitespace-nowrap">{item.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-white border-b border-amber-900/10 px-4 pt-2 pb-4 space-y-1 shadow-lg animate-in slide-in-from-top-2">
