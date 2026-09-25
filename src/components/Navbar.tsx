@@ -31,12 +31,12 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navItems = [
     { id: 'destinations', label: t.nav.destinations, icon: Compass },
-    { id: 'circuit-map', label: t.nav.circuitMap, icon: MapPin },
+    { id: 'circuit', label: t.nav.circuitMap, icon: MapPin },
     { id: 'planner', label: t.nav.planner, icon: Navigation },
     { id: 'weavers', label: t.nav.weavers, icon: ShoppingBag },
     { id: 'scanner', label: t.nav.scanner, icon: Camera },
-    { id: 'traveler-toolkit', label: t.nav.toolkit, icon: Award },
-    { id: 'transportation', label: t.nav.transportation, icon: Train },
+    { id: 'toolkit', label: t.nav.toolkit, icon: Award },
+    { id: 'transport', label: t.nav.transportation, icon: Train },
   ];
 
   const handleItemClick = (id: string) => {

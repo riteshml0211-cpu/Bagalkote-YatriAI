@@ -65,8 +65,12 @@ export default function App() {
     if (sectionId === 'validator' || sectionId === 'cuisine') {
       setWeaversTab(sectionId === 'validator' ? 'validator' : 'cuisine');
       setActiveTab('weavers');
-    } else if (sectionId === 'transportation') {
+    } else if (sectionId === 'transportation' || sectionId === 'transport') {
       setActiveTab('transport');
+    } else if (sectionId === 'circuit-map' || sectionId === 'circuit') {
+      setActiveTab('circuit');
+    } else if (sectionId === 'traveler-toolkit' || sectionId === 'toolkit') {
+      setActiveTab('toolkit');
     } else {
       setActiveTab(sectionId);
     }
