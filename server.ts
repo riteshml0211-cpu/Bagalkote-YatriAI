@@ -83,7 +83,7 @@ app.post('/api/chat', async (req, res) => {
 
         const chatPrompt = `${langInstruction}\nUser Question: ${message}`;
         const response = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
+          model: 'gemini-2.5-flash',
           contents: chatPrompt,
           config: {
             systemInstruction: BAGALKOTE_SYSTEM_PROMPT,
@@ -121,6 +121,20 @@ app.post('/api/chat', async (req, res) => {
         reply = 'ಸಿದ್ಧನಕೊಳ್ಳವು ಬಾದಾಮಿಯಿಂದ ಕೇವಲ ೧೮ ಕಿ.ಮೀ ದೂರದಲ್ಲಿರುವ ಒಂದು ರಮಣೀಯ ಗುಪ್ತ ಕಣಿವೆ. ಇಲ್ಲಿ ದಟ್ಟ ಹಸಿರು ಮತ್ತು ಕೆಂಪು ಮರಳುಗಲ್ಲಿನ ಬಂಡೆಗಳ ನಡುವೆ ಸದಾ ತಿಳಿನೀರಿನ ಜಲಪಾತ ಹರಿಯುತ್ತದೆ. ನೈಸರ್ಗಿಕ ಕಲ್ಯಾಣಿಯ ಪಕ್ಕದಲ್ಲಿ ೧೦-೧೨ನೇ ಶತಮಾನದ ಸಂಗಮೇಶ್ವರ ದೇವಾಲಯವಿದೆ. ಯಾವುದೇ ಪ್ರವಾಸಿ ಗದ್ದಲವಿಲ್ಲದ ಶಾಂತ ತಾಣ.';
       } else if (lower.includes('bilgi') || lower.includes('ಬಿಳಿಗಿ')) {
         reply = 'ಬಿಳಿಗಿಯ ಅರೆಭಾವನಾವಿಯು ೧೫೮೮ ರಲ್ಲಿ ಯುವರಾಜ ಖಂಡೇರಾಯನಿಂದ ನಿರ್ಮಿತವಾದ ಅಪರೂಪದ ಮೆಟ್ಟಿಲು ಬಾವಿ (ಬಾವೋಲಿ). ಇದರಲ್ಲಿ ಕನ್ನಡ ಮತ್ತು ಪರ್ಷಿಯನ್ ಭಾಷೆಗಳೆರಡರಲ್ಲೂ ಕೆತ್ತಲಾದ ಐತಿಹಾಸಿಕ ಶಿಲಾಶಾಸನಗಳು ಹಾಗೂ ನೆಲದಡಿಯ ತಂಪಾದ ಕಲ್ಲಿನ ಕಮಾನುಗಳಿವೆ. ಬಾದಾಮಿಯಿಂದ ೩೨ ಕಿ.ಮೀ ದೂರದಲ್ಲಿದೆ.';
+      } else if (
+        lower.includes('translate') ||
+        lower.includes('translation') ||
+        lower.includes('how to say') ||
+        lower.includes('kannada') ||
+        lower.includes('phrase') ||
+        lower.includes('meaning') ||
+        lower.includes('ಭಾಷಾಂತರ') ||
+        lower.includes('ಹೇಗೆ ಹೇಳುವುದು') ||
+        lower.includes('bus stand') ||
+        lower.includes('how much') ||
+        lower.includes('where is')
+      ) {
+        reply = `ಕನ್ನಡ ಭಾಷಾ ಮತ್ತು ಪ್ರವಾಸಿ ನುಡಿಗಟ್ಟು ಮಾರ್ಗದರ್ಶಿ (Travel Phrasebook):\n• ಪ್ರಶ್ನೆ: "${message}"\n• ಪ್ರಮುಖ ನುಡಿಗಟ್ಟುಗಳು:\n  - ಬಸ್ ನಿಲ್ದಾಣ ಎಲ್ಲಿದೆ?: Bus nildana ellide?\n  - ನಮಸ್ಕಾರ: Namaskara (Hello)\n  - ಧನ್ಯವಾದಗಳು: Dhanyavaadagalu (Thank you)\n  - ಇದು ಎಷ್ಟು?: Idu eshtu? (How much is this?)`;
       } else {
         reply = 'ಬಾಗಲಕೋಟೆ ಯಾತ್ರಿAI ಗೆ ಸ್ವಾಗತ! ನೀವು ಬಾದಾಮಿ, ಪಟ್ಟದಕಲ್ಲು, ಐಹೊಳೆಗಳೊಂದಿಗೆ ಸಿದ್ಧನಕೊಳ್ಳ ಜಲಪಾತ, ಬಿಳಿಗಿ ಮೆಟ್ಟಿಲು ಬಾವಿ, ಗುಳೇದಗುಡ್ಡ ಕೋಟೆ, ಬಾಚಿನಗುಡ್ಡದಂತಹ ಗುಪ್ತ ತಾಣಗಳ ಬಗ್ಗೆಯೂ ಮಾಹಿತಿ ಕೇಳಬಹುದು!';
       }
@@ -141,6 +155,23 @@ app.post('/api/chat', async (req, res) => {
         reply = 'Siddhankolla is a hidden canyon gorge 18 km from Badami. A natural spring waterfall cascades over sandstone boulders into a sacred pool beside an ancient stone shrine of Lord Sangameshwara. It is shaded by wild fig trees and offers complete peace without tour buses or crowds.';
       } else if (lower.includes('bilgi')) {
         reply = 'Bilgi Arebhavanavi is a magnificent 16th-century stone stepwell located in Bilgi (32 km north of Badami). Built in 1588 CE by Prince Khanderaya, it features subterranean colonnaded chambers designed for natural cooling and remarkable bilingual foundation tablets inscribed in classical Kannada and Persian calligraphy.';
+      } else if (
+        lower.includes('translate') ||
+        lower.includes('translation') ||
+        lower.includes('how to say') ||
+        lower.includes('kannada') ||
+        lower.includes('phrase') ||
+        lower.includes('meaning') ||
+        lower.includes('ಭಾಷಾಂತರ') ||
+        lower.includes('ಹೇಗೆ ಹೇಳುವುದು') ||
+        lower.includes('bus stand') ||
+        lower.includes('how much') ||
+        lower.includes('where is')
+      ) {
+        reply =
+          language === 'kn'
+            ? `ಕನ್ನಡ ಭಾಷಾ ಮತ್ತು ಪ್ರವಾಸಿ ನುಡಿಗಟ್ಟು ಮಾರ್ಗದರ್ಶಿ (Travel Phrasebook):\n• "${message}"\n• ಕನ್ನಡ ಅನುವಾದ: ಬಸ್ ನಿಲ್ದಾಣ ಎಲ್ಲಿದೆ? (Bus nildana ellide?)\n• ನಮಸ್ಕಾರ (Namaskara) - Hello\n• ಧನ್ಯವಾದಗಳು (Dhanyavaadagalu) - Thank you\n• ಇದು ಎಷ್ಟು? (Idu eshtu?) - How much is this?`
+            : `🔤 Bagalkote Traveler Kannada Translation & Phrasebook Guide:\n• Query: "${message}"\n• Kannada Translation / Phrase:\n  - Where is the bus stand?: ಬಸ್ ನಿಲ್ದಾಣ ಎಲ್ಲಿದೆ? (Bus nildana ellide?)\n  - Hello / Greetings: ನಮಸ್ಕಾರ (Namaskara)\n  - Thank you: ಧನ್ಯವಾದಗಳು (Dhanyavaadagalu)\n  - How much is this?: ಇದು ಎಷ್ಟು? (Idu eshtu?)\n  - I need drinking water: ಕುಡಿಯುವ ನೀರು ಬೇಕು (Kudiyaalu neeru beku)`;
       } else {
         reply = 'Welcome to Bagalkote YatriAI! I can help you with historical backstories, entry fees, operational hours, route distances between Badami-Pattadakal-Aihole, authentic Ilkal handlooms, North Karnataka food guides, and hidden gems like Siddhankolla gorge and Bilgi stepwell. What would you like to explore?';
       }
@@ -202,7 +233,7 @@ Identify the landmark or monument accurately. Output in strict JSON format with 
 
       try {
         const response = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
+          model: 'gemini-2.5-flash',
           contents: {
             parts: [
               {
@@ -305,7 +336,7 @@ Return a valid JSON object matching:
 
       try {
         const response = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
+          model: 'gemini-2.5-flash',
           contents: prompt,
           config: {
             responseMimeType: 'application/json',
